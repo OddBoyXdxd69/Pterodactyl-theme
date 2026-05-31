@@ -14,7 +14,7 @@ import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 const SidebarLink = styled(NavLink)`
     ${tw`flex items-center w-full px-4 py-2.5 text-neutral-400 hover:text-white hover:bg-neutral-800/40 rounded-lg transition-all duration-150 no-underline font-medium`};
     &.active {
-        ${tw`text-white bg-purple-600 hover:bg-purple-700 shadow-md shadow-purple-600/10`};
+        ${tw`text-white bg-purple-600 hover:bg-purple-700 shadow-md`};
     }
 `;
 
