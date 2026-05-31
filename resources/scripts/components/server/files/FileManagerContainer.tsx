@@ -78,8 +78,8 @@ export default () => {
                         <div className={style.manager_actions}>
                             <FileManagerStatus />
                             <NewDirectoryButton />
-                            <UploadButton />
                             <PullFileButton />
+                            <UploadButton />
                             <NavLink to={`/server/${id}/files/new${window.location.hash}`}>
                                 <Button>New File</Button>
                             </NavLink>

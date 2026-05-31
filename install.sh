@@ -61,6 +61,8 @@ files=(
   "resources/scripts/components/server/subdomains/SubdomainsContainer.tsx"
   "resources/scripts/components/server/files/FileManagerContainer.tsx"
   "resources/scripts/components/server/files/PullFileButton.tsx"
+  "resources/scripts/components/server/files/NewDirectoryButton.tsx"
+  "resources/scripts/components/server/files/style.module.css"
 )
 
 # 2. Download and replace files
