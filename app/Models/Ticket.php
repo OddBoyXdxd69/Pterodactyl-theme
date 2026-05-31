@@ -39,4 +39,12 @@ class Ticket extends Model
     {
         return $this->hasMany(TicketMessage::class);
     }
+
+    /**
+     * Override route binding key to be 'id' rather than parent Model's default 'uuid'.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
 }

@@ -40,4 +40,12 @@ class TicketMessage extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Override route binding key to be 'id' rather than parent Model's default 'uuid'.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'id';
+    }
 }
