@@ -96,6 +96,11 @@
                                 <i class="fa fa-link"></i> <span>Subdomains</span>
                             </a>
                         </li>
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.plugins') ?: 'active' }}">
+                            <a href="{{ route('admin.plugins') }}">
+                                <i class="fa fa-puzzle-piece"></i> <span>Plugins Downloader</span>
+                            </a>
+                        </li>
                         <li class="header">MANAGEMENT</li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">

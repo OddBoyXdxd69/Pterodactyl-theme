@@ -81,6 +81,8 @@ Route::patch('/theme', [Admin\Settings\ThemeController::class, 'update']);
 
 Route::get('/subdomains', [Admin\Settings\SubdomainController::class, 'index'])->name('admin.subdomains');
 Route::patch('/subdomains', [Admin\Settings\SubdomainController::class, 'update']);
+Route::get('/plugins', [Admin\Settings\PluginsController::class, 'index'])->name('admin.plugins');
+Route::patch('/plugins', [Admin\Settings\PluginsController::class, 'update']);
 
 /*
 |--------------------------------------------------------------------------

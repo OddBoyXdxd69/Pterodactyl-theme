@@ -33,6 +33,10 @@ class AssetComposer
                 'discord_url' => config('pterodactyl.theme.discord_url') ?: '',
                 'support_url' => config('pterodactyl.theme.support_url') ?: '',
             ],
+            'plugins' => [
+                'enabled' => (bool) config('pterodactyl.plugins.enabled', false),
+                'nests' => array_filter(array_map('intval', explode(',', config('pterodactyl.plugins.nests', '')))),
+            ],
         ]);
     }
 }

@@ -24,7 +24,8 @@ import {
     faSlidersH,
     faHistory,
     faExternalLinkAlt,
-    faGlobe
+    faGlobe,
+    faPuzzlePiece
 } from '@fortawesome/free-solid-svg-icons';
 import { useStoreState } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
@@ -65,6 +66,7 @@ const iconMap: Record<string, any> = {
     'Settings': faSlidersH,
     'Activity': faHistory,
     'Subdomains': faGlobe,
+    'Plugins': faPuzzlePiece,
 };
 
 const ServerSidebarLinks = ({ setSidebarOpen }: { setSidebarOpen: (o: boolean) => void }) => {
@@ -79,6 +81,10 @@ const ServerSidebarLinks = ({ setSidebarOpen }: { setSidebarOpen: (o: boolean) =
 const ServerSidebarLinksInner = ({ match, rootAdmin, setSidebarOpen }: { match: any, rootAdmin: boolean, setSidebarOpen: (o: boolean) => void }) => {
     const serverName = ServerContext.useStoreState((state) => state.server.data?.name);
     const serverId = ServerContext.useStoreState((state) => state.server.data?.internalId);
+    const nestId = ServerContext.useStoreState((state) => state.server.data?.nestId);
+
+    const pluginsConfig = (window as any).SiteConfiguration?.plugins;
+    const isPluginsEnabled = !!(pluginsConfig?.enabled && nestId && pluginsConfig?.nests?.includes(nestId));
 
     const to = (path: string) => {
         if (path === '/') {
@@ -94,7 +100,12 @@ const ServerSidebarLinksInner = ({ match, rootAdmin, setSidebarOpen }: { match: 
                 {serverName || 'Server Management'}
             </div>
             {routes.server
-                .filter((route) => !!route.name)
+                .filter((route) => {
+                    if (route.path === '/plugins') {
+                        return isPluginsEnabled;
+                    }
+                    return !!route.name;
+                })
                 .map((route) => {
                     const icon = iconMap[route.name!] || faLayerGroup;
                     const content = (

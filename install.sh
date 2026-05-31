@@ -67,6 +67,11 @@ files=(
   "app/Services/Servers/BuildModificationService.php"
   "app/Http/Controllers/Admin/ServersController.php"
   "resources/views/admin/servers/view/build.blade.php"
+  "app/Transformers/Api/Client/ServerTransformer.php"
+  "resources/scripts/api/server/getServer.ts"
+  "resources/scripts/components/server/plugins/PluginsContainer.tsx"
+  "app/Http/Controllers/Admin/Settings/PluginsController.php"
+  "resources/views/admin/settings/plugins.blade.php"
 )
 
 # 2. Download and replace files
