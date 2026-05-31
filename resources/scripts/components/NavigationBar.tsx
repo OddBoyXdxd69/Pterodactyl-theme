@@ -36,6 +36,7 @@ import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import { ServerContext } from '@/state/server';
 import routes from '@/routers/routes';
 import Can from '@/components/elements/Can';
+import { Dialog } from '@/components/elements/dialog';
 
 const SidebarLink = styled(NavLink)`
     ${tw`flex items-center w-full px-4 py-2.5 text-neutral-400 hover:text-white hover:bg-neutral-800/40 rounded-lg transition-all duration-150 no-underline font-medium`};
@@ -126,6 +127,7 @@ export default () => {
     const discordUrl = useStoreState((state: ApplicationStore) => state.settings.data!.theme?.discord_url);
     const supportUrl = useStoreState((state: ApplicationStore) => state.settings.data!.theme?.support_url);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [confirmLogout, setConfirmLogout] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
@@ -135,6 +137,11 @@ export default () => {
     }, []);
 
     const onTriggerLogout = () => {
+        setConfirmLogout(true);
+    };
+
+    const handleLogout = () => {
+        setConfirmLogout(false);
         setIsLoggingOut(true);
         http.post('/auth/logout').finally(() => {
             // @ts-expect-error this is valid
@@ -151,6 +158,16 @@ export default () => {
     return (
         <>
             <SpinnerOverlay visible={isLoggingOut} />
+
+            <Dialog.Confirm
+                open={confirmLogout}
+                onClose={() => setConfirmLogout(false)}
+                title={'Sign Out'}
+                confirm={'Sign Out'}
+                onConfirmed={handleLogout}
+            >
+                Are you sure you want to sign out of your account?
+            </Dialog.Confirm>
 
             {/* Mobile & Desktop Header Topbar */}
             <div
