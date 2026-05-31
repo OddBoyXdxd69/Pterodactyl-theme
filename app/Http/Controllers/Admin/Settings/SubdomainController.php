@@ -38,10 +38,16 @@ class SubdomainController extends Controller
         $request->validate([
             'pterodactyl:subdomains:enabled' => 'required|in:0,1',
             'pterodactyl:subdomains:domains' => 'nullable|string',
+            'pterodactyl:subdomains:cf_email' => 'nullable|email',
+            'pterodactyl:subdomains:cf_key' => 'nullable|string',
+            'pterodactyl:subdomains:cf_zone_id' => 'nullable|string',
         ]);
 
         $this->settings->set('settings::pterodactyl:subdomains:enabled', $request->input('pterodactyl:subdomains:enabled'));
         $this->settings->set('settings::pterodactyl:subdomains:domains', $request->input('pterodactyl:subdomains:domains') ?? '');
+        $this->settings->set('settings::pterodactyl:subdomains:cf_email', $request->input('pterodactyl:subdomains:cf_email') ?? '');
+        $this->settings->set('settings::pterodactyl:subdomains:cf_key', $request->input('pterodactyl:subdomains:cf_key') ?? '');
+        $this->settings->set('settings::pterodactyl:subdomains:cf_zone_id', $request->input('pterodactyl:subdomains:cf_zone_id') ?? '');
 
         $this->kernel->call('queue:restart');
         $this->alert->success('Subdomains settings have been updated successfully and the queue worker was restarted.')->flash();

@@ -37,6 +37,9 @@ class SettingsServiceProvider extends ServiceProvider
         'pterodactyl:theme:support_url',
         'pterodactyl:subdomains:enabled',
         'pterodactyl:subdomains:domains',
+        'pterodactyl:subdomains:cf_email',
+        'pterodactyl:subdomains:cf_key',
+        'pterodactyl:subdomains:cf_zone_id',
     ];
 
     /**
