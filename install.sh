@@ -75,6 +75,15 @@ files=(
   "app/Http/Controllers/Admin/Settings/VersionsController.php"
   "resources/views/admin/settings/versions.blade.php"
   "resources/scripts/components/server/versions/VersionsContainer.tsx"
+  "database/migrations/2026_05_31_120000_create_tickets_table.php"
+  "app/Models/Ticket.php"
+  "app/Models/TicketMessage.php"
+  "app/Http/Controllers/Api/Client/SupportController.php"
+  "app/Http/Controllers/Admin/Settings/TicketsController.php"
+  "resources/views/admin/settings/tickets/index.blade.php"
+  "resources/views/admin/settings/tickets/view.blade.php"
+  "resources/scripts/routers/DashboardRouter.tsx"
+  "resources/scripts/components/dashboard/SupportContainer.tsx"
 )
 
 # 2. Download and replace files

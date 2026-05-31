@@ -106,6 +106,11 @@
                                 <i class="fa fa-download"></i> <span>Versions Downloader</span>
                             </a>
                         </li>
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.tickets') ?: 'active' }}">
+                            <a href="{{ route('admin.tickets') }}">
+                                <i class="fa fa-ticket"></i> <span>Support Tickets</span>
+                            </a>
+                        </li>
                         <li class="header">MANAGEMENT</li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">

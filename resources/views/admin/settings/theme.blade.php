@@ -56,18 +56,11 @@
                             <div class="form-group col-md-12">
                                 <hr style="border-color: #444;" />
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-12">
                                 <label class="control-label">Discord Server Invite URL</label>
                                 <div>
                                     <input type="text" class="form-control" name="pterodactyl:theme:discord_url" value="{{ old('pterodactyl:theme:discord_url', config('pterodactyl.theme.discord_url')) }}" placeholder="https://discord.gg/yourinvite" />
                                     <p class="text-muted"><small>The Discord link displayed alongside your panel name in the client sidebar.</small></p>
-                                </div>
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label class="control-label">Support Server / Ticket URL</label>
-                                <div>
-                                    <input type="text" class="form-control" name="pterodactyl:theme:support_url" value="{{ old('pterodactyl:theme:support_url', config('pterodactyl.theme.support_url')) }}" placeholder="https://hostmc.in/support" />
-                                    <p class="text-muted"><small>The Support link (represented by a headset icon) displayed in the client header.</small></p>
                                 </div>
                             </div>
                         </div>

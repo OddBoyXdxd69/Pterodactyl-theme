@@ -46,6 +46,14 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
     });
 });
 
+Route::prefix('/tickets')->group(function () {
+    Route::get('/', [Client\SupportController::class, 'index']);
+    Route::post('/', [Client\SupportController::class, 'store']);
+    Route::get('/{ticket}', [Client\SupportController::class, 'view']);
+    Route::post('/{ticket}/messages', [Client\SupportController::class, 'storeMessage']);
+    Route::post('/{ticket}/close', [Client\SupportController::class, 'close']);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Client Control API

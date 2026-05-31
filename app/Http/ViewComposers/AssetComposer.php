@@ -31,7 +31,6 @@ class AssetComposer
                 'logo' => config('pterodactyl.theme.login_logo') ?: '/assets/svgs/pterodactyl.svg',
                 'footer' => config('pterodactyl.theme.login_footer') ?: '',
                 'discord_url' => config('pterodactyl.theme.discord_url') ?: '',
-                'support_url' => config('pterodactyl.theme.support_url') ?: '',
             ],
             'plugins' => [
                 'enabled' => (bool) config('pterodactyl.plugins.enabled', false),

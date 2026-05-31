@@ -85,6 +85,11 @@ Route::get('/plugins', [Admin\Settings\PluginsController::class, 'index'])->name
 Route::patch('/plugins', [Admin\Settings\PluginsController::class, 'update']);
 Route::get('/versions', [Admin\Settings\VersionsController::class, 'index'])->name('admin.versions');
 Route::patch('/versions', [Admin\Settings\VersionsController::class, 'update']);
+Route::get('/tickets', [Admin\Settings\TicketsController::class, 'index'])->name('admin.tickets');
+Route::get('/tickets/{ticket}', [Admin\Settings\TicketsController::class, 'view'])->name('admin.tickets.view');
+Route::post('/tickets/{ticket}/reply', [Admin\Settings\TicketsController::class, 'reply'])->name('admin.tickets.reply');
+Route::post('/tickets/{ticket}/close', [Admin\Settings\TicketsController::class, 'close'])->name('admin.tickets.close');
+Route::delete('/tickets/{ticket}', [Admin\Settings\TicketsController::class, 'delete'])->name('admin.tickets.delete');
 
 /*
 |--------------------------------------------------------------------------
