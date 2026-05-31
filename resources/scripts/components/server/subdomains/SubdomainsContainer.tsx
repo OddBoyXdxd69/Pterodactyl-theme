@@ -34,6 +34,7 @@ export default () => {
     const [allowedDomains, setAllowedDomains] = useState<string[]>([]);
     const [defaultIp, setDefaultIp] = useState('');
     const [defaultPort, setDefaultPort] = useState<number>(25565);
+    const [subdomainLimit, setSubdomainLimit] = useState<number>(0);
 
     const [subdomain, setSubdomain] = useState('');
     const [domain, setDomain] = useState('');
@@ -48,6 +49,7 @@ export default () => {
                 setAllowedDomains(data.allowed_domains);
                 setDefaultIp(data.default_ip);
                 setDefaultPort(data.default_port);
+                setSubdomainLimit(data.subdomain_limit);
                 if (data.allowed_domains.length > 0) {
                     setDomain(data.allowed_domains[0]);
                 }
@@ -132,6 +134,11 @@ export default () => {
                                 <FontAwesomeIcon icon={faInfoCircle} css={tw`mt-1 flex-shrink-0`} />
                                 <span>No domains are configured by the admin yet. Please contact support.</span>
                             </div>
+                        ) : subdomainLimit > 0 && subdomains.length >= subdomainLimit ? (
+                            <div css={tw`bg-yellow-500 bg-opacity-10 border border-yellow-500 border-opacity-20 text-yellow-300 text-sm p-4 rounded-lg flex items-start space-x-3`}>
+                                <FontAwesomeIcon icon={faInfoCircle} css={tw`mt-1 flex-shrink-0`} />
+                                <span>You have reached the maximum allowed limit of {subdomainLimit} subdomains for this server.</span>
+                            </div>
                         ) : (
                             <form onSubmit={onCreate} css={tw`space-y-4`}>
                                 <div>
@@ -205,7 +212,7 @@ export default () => {
                     {/* Subdomains Table */}
                     <div css={tw`lg:col-span-2 space-y-3`}>
                         <h2 css={tw`text-lg font-header font-semibold text-gray-100`}>
-                            Configured Subdomains
+                            Configured Subdomains {subdomainLimit > 0 ? `(${subdomains.length}/${subdomainLimit})` : ''}
                         </h2>
                         
                         {subdomains.length === 0 ? (

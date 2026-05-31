@@ -39,6 +39,13 @@
                                     <p class="text-muted"><small>Enter the root domains allowed for subdomains (<strong>one per line</strong>). You can optionally assign specific Zone IDs by appending it with a colon (e.g. <code>domain.com:zone_id</code>).</small></p>
                                 </div>
                             </div>
+                            <div class="form-group col-md-12">
+                                <label class="control-label">Default Subdomain Limit per Server</label>
+                                <div>
+                                    <input type="number" class="form-control" name="pterodactyl:subdomains:limit" value="{{ old('pterodactyl:subdomains:limit', config('pterodactyl.subdomains.limit', 0)) }}" min="0" />
+                                    <p class="text-muted"><small>The default number of subdomains a server is allowed to create. Set to <code>0</code> for unlimited.</small></p>
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-12">

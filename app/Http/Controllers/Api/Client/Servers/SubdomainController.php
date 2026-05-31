@@ -35,11 +35,15 @@ class SubdomainController extends ClientApiController
         $ip = $allocation ? $allocation->ip : '127.0.0.1';
         $port = $allocation ? $allocation->port : 25565;
 
+        $globalLimit = (int) $this->settings->get('settings::pterodactyl:subdomains:limit', 0);
+        $serverLimit = is_null($server->subdomain_limit) ? $globalLimit : (int) $server->subdomain_limit;
+
         return new JsonResponse([
             'subdomains' => $subdomains,
             'allowed_domains' => array_values($allowedDomains),
             'default_ip' => $ip,
             'default_port' => $port,
+            'subdomain_limit' => $serverLimit,
         ]);
     }
 
@@ -57,6 +61,20 @@ class SubdomainController extends ClientApiController
             'domain' => 'required|string|in:' . $allowedDomainsStr,
             'record_type' => 'required|string|in:A,CNAME,SRV',
         ]);
+
+        $globalLimit = (int) $this->settings->get('settings::pterodactyl:subdomains:limit', 0);
+        $serverLimit = is_null($server->subdomain_limit) ? $globalLimit : (int) $server->subdomain_limit;
+
+        if ($serverLimit > 0) {
+            $currentCount = Subdomain::where('server_id', $server->id)->count();
+            if ($currentCount >= $serverLimit) {
+                return new JsonResponse([
+                    'errors' => [
+                        'subdomain' => ["This server has reached its limit of {$serverLimit} subdomains."]
+                    ]
+                ], 422);
+            }
+        }
 
         $subdomainPrefix = strtolower($request->input('subdomain'));
         $rootDomain = $request->input('domain');

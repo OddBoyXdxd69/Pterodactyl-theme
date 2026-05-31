@@ -63,6 +63,10 @@ files=(
   "resources/scripts/components/server/files/PullFileButton.tsx"
   "resources/scripts/components/server/files/NewDirectoryButton.tsx"
   "resources/scripts/components/server/files/style.module.css"
+  "database/migrations/2026_05_31_110000_add_subdomain_limit_to_servers_table.php"
+  "app/Services/Servers/BuildModificationService.php"
+  "app/Http/Controllers/Admin/ServersController.php"
+  "resources/views/admin/servers/view/build.blade.php"
 )
 
 # 2. Download and replace files

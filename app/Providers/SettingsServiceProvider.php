@@ -40,6 +40,7 @@ class SettingsServiceProvider extends ServiceProvider
         'pterodactyl:subdomains:cf_email',
         'pterodactyl:subdomains:cf_key',
         'pterodactyl:subdomains:cf_zone_id',
+        'pterodactyl:subdomains:limit',
     ];
 
     /**
