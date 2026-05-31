@@ -37,6 +37,10 @@ class AssetComposer
                 'enabled' => (bool) config('pterodactyl.plugins.enabled', false),
                 'nests' => array_filter(array_map('intval', explode(',', config('pterodactyl.plugins.nests', '')))),
             ],
+            'versions' => [
+                'enabled' => (bool) config('pterodactyl.versions.enabled', false),
+                'nests' => array_filter(array_map('intval', explode(',', config('pterodactyl.versions.nests', '')))),
+            ],
         ]);
     }
 }

@@ -43,6 +43,8 @@ class SettingsServiceProvider extends ServiceProvider
         'pterodactyl:subdomains:limit',
         'pterodactyl:plugins:enabled',
         'pterodactyl:plugins:nests',
+        'pterodactyl:versions:enabled',
+        'pterodactyl:versions:nests',
     ];
 
     /**

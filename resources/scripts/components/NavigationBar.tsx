@@ -25,7 +25,8 @@ import {
     faHistory,
     faExternalLinkAlt,
     faGlobe,
-    faPuzzlePiece
+    faPuzzlePiece,
+    faDownload
 } from '@fortawesome/free-solid-svg-icons';
 import { useStoreState } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
@@ -67,6 +68,7 @@ const iconMap: Record<string, any> = {
     'Activity': faHistory,
     'Subdomains': faGlobe,
     'Plugins': faPuzzlePiece,
+    'Versions': faDownload,
 };
 
 const ServerSidebarLinks = ({ setSidebarOpen }: { setSidebarOpen: (o: boolean) => void }) => {
@@ -86,6 +88,9 @@ const ServerSidebarLinksInner = ({ match, rootAdmin, setSidebarOpen }: { match: 
     const pluginsConfig = (window as any).SiteConfiguration?.plugins;
     const isPluginsEnabled = !!(pluginsConfig?.enabled && nestId && pluginsConfig?.nests?.includes(nestId));
 
+    const versionsConfig = (window as any).SiteConfiguration?.versions;
+    const isVersionsEnabled = !!(versionsConfig?.enabled && nestId && versionsConfig?.nests?.includes(nestId));
+
     const to = (path: string) => {
         if (path === '/') {
             return `/server/${match.params.id}`;
@@ -103,6 +108,9 @@ const ServerSidebarLinksInner = ({ match, rootAdmin, setSidebarOpen }: { match: 
                 .filter((route) => {
                     if (route.path === '/plugins') {
                         return isPluginsEnabled;
+                    }
+                    if (route.path === '/versions') {
+                        return isVersionsEnabled;
                     }
                     return !!route.name;
                 })

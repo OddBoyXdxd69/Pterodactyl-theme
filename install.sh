@@ -72,6 +72,9 @@ files=(
   "resources/scripts/components/server/plugins/PluginsContainer.tsx"
   "app/Http/Controllers/Admin/Settings/PluginsController.php"
   "resources/views/admin/settings/plugins.blade.php"
+  "app/Http/Controllers/Admin/Settings/VersionsController.php"
+  "resources/views/admin/settings/versions.blade.php"
+  "resources/scripts/components/server/versions/VersionsContainer.tsx"
 )
 
 # 2. Download and replace files

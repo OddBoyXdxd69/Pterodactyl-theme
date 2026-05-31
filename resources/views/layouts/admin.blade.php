@@ -101,6 +101,11 @@
                                 <i class="fa fa-puzzle-piece"></i> <span>Plugins Downloader</span>
                             </a>
                         </li>
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.versions') ?: 'active' }}">
+                            <a href="{{ route('admin.versions') }}">
+                                <i class="fa fa-download"></i> <span>Versions Downloader</span>
+                            </a>
+                        </li>
                         <li class="header">MANAGEMENT</li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">

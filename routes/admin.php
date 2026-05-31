@@ -83,6 +83,8 @@ Route::get('/subdomains', [Admin\Settings\SubdomainController::class, 'index'])-
 Route::patch('/subdomains', [Admin\Settings\SubdomainController::class, 'update']);
 Route::get('/plugins', [Admin\Settings\PluginsController::class, 'index'])->name('admin.plugins');
 Route::patch('/plugins', [Admin\Settings\PluginsController::class, 'update']);
+Route::get('/versions', [Admin\Settings\VersionsController::class, 'index'])->name('admin.versions');
+Route::patch('/versions', [Admin\Settings\VersionsController::class, 'update']);
 
 /*
 |--------------------------------------------------------------------------

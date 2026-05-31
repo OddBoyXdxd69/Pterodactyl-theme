@@ -141,6 +141,12 @@ export default {
             component: lazy(() => import('@/components/server/plugins/PluginsContainer')),
         },
         {
+            path: '/versions',
+            permission: null,
+            name: 'Versions',
+            component: lazy(() => import('@/components/server/versions/VersionsContainer')),
+        },
+        {
             path: '/settings',
             permission: ['settings.*', 'file.sftp'],
             name: 'Settings',
