@@ -80,11 +80,6 @@
                                 <i class="fa fa-wrench"></i> <span>Settings</span>
                             </a>
                         </li>
-                        <li class="{{ Route::currentRouteName() !== 'admin.theme' ?: 'active' }}">
-                            <a href="{{ route('admin.theme') }}">
-                                <i class="fa fa-paint-brush"></i> <span>Theme Settings</span>
-                            </a>
-                        </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.api') ?: 'active' }}">
                             <a href="{{ route('admin.api.index')}}">
                                 <i class="fa fa-gamepad"></i> <span>Application API</span>
@@ -116,11 +111,6 @@
                                 <i class="fa fa-users"></i> <span>Users</span>
                             </a>
                         </li>
-                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.subdomains') ?: 'active' }}">
-                            <a href="{{ route('admin.subdomains') }}">
-                                <i class="fa fa-link"></i> <span>Subdomains</span>
-                            </a>
-                        </li>
                         <li class="header">SERVICE MANAGEMENT</li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.mounts') ?: 'active' }}">
                             <a href="{{ route('admin.mounts') }}">
@@ -130,6 +120,17 @@
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.nests') ?: 'active' }}">
                             <a href="{{ route('admin.nests') }}">
                                 <i class="fa fa-th-large"></i> <span>Nests</span>
+                            </a>
+                        </li>
+                        <li class="header">PTERO PLUGINS</li>
+                        <li class="{{ Route::currentRouteName() !== 'admin.theme' ?: 'active' }}">
+                            <a href="{{ route('admin.theme') }}">
+                                <i class="fa fa-paint-brush"></i> <span>Theme Settings</span>
+                            </a>
+                        </li>
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.subdomains') ?: 'active' }}">
+                            <a href="{{ route('admin.subdomains') }}">
+                                <i class="fa fa-link"></i> <span>Subdomains</span>
                             </a>
                         </li>
                     </ul>
