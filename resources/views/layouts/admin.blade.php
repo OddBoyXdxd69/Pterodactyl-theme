@@ -85,6 +85,17 @@
                                 <i class="fa fa-gamepad"></i> <span>Application API</span>
                             </a>
                         </li>
+                        <li class="header">PTERO PLUGINS</li>
+                        <li class="{{ Route::currentRouteName() !== 'admin.theme' ?: 'active' }}">
+                            <a href="{{ route('admin.theme') }}">
+                                <i class="fa fa-paint-brush"></i> <span>Theme Settings</span>
+                            </a>
+                        </li>
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.subdomains') ?: 'active' }}">
+                            <a href="{{ route('admin.subdomains') }}">
+                                <i class="fa fa-link"></i> <span>Subdomains</span>
+                            </a>
+                        </li>
                         <li class="header">MANAGEMENT</li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">
@@ -122,17 +133,7 @@
                                 <i class="fa fa-th-large"></i> <span>Nests</span>
                             </a>
                         </li>
-                        <li class="header">PTERO PLUGINS</li>
-                        <li class="{{ Route::currentRouteName() !== 'admin.theme' ?: 'active' }}">
-                            <a href="{{ route('admin.theme') }}">
-                                <i class="fa fa-paint-brush"></i> <span>Theme Settings</span>
-                            </a>
-                        </li>
-                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.subdomains') ?: 'active' }}">
-                            <a href="{{ route('admin.subdomains') }}">
-                                <i class="fa fa-link"></i> <span>Subdomains</span>
-                            </a>
-                        </li>
+
                     </ul>
                 </section>
             </aside>
