@@ -49,7 +49,7 @@ export default () => {
     };
 
     const DiscordIcon = () => (
-        <svg viewBox="0 0 127.14 96.36" style={{ width: '24px', height: '24px', fill: 'currentColor' }}>
+        <svg viewBox="0 0 127.14 96.36" style={{ width: '18px', height: '18px', fill: 'currentColor' }}>
             <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.43-5c.87-.64,1.71-1.32,2.51-2a76.1,76.1,0,0,0,72.76,0c.8,0.7,1.64,1.38,2.51,2a68.43,68.43,0,0,1-10.43,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31-18.83C129.87,50.22,123.63,27.31,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z" />
         </svg>
     );
@@ -64,7 +64,10 @@ export default () => {
             >
                 {/* Left Side: Mobile Hamburger button & Name */}
                 <div css={tw`flex items-center`}>
-                    <button onClick={() => setSidebarOpen(!sidebarOpen)} css={tw`text-neutral-200 hover:text-white p-2 mr-2 outline-none focus:outline-none md:hidden`}>
+                    <button
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                        className="w-10 h-10 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-200 hover:text-white mr-3 md:hidden focus:outline-none"
+                    >
                         <FontAwesomeIcon icon={sidebarOpen ? faTimes : faBars} size="lg" />
                     </button>
                     <Link to="/" css={tw`text-lg font-header font-bold text-white tracking-tight truncate max-w-[120px] no-underline md:hidden`}>
@@ -75,16 +78,16 @@ export default () => {
                 {/* Right Side: Grouped Boxed Icons */}
                 <div css={tw`flex items-center space-x-2 flex-shrink-0`}>
                     {discordUrl && (
-                        <a href={discordUrl} target="_blank" rel="noopener noreferrer" className="w-12 h-12 mr-3 flex items-center justify-center rounded-none bg-white border border-neutral-200 text-neutral-800 hover:text-purple-600 hover:bg-neutral-100 transition-all duration-150" title="Join Discord">
+                        <a href={discordUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Join Discord">
                             <DiscordIcon />
                         </a>
                     )}
-                    <NavLink to="/account/activity" className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Activity / Notifications">
-                        <FontAwesomeIcon icon={faBell} size="sm" />
+                    <NavLink to="/account/activity" className="w-10 h-10 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Activity / Notifications">
+                        <FontAwesomeIcon icon={faBell} size="lg" />
                     </NavLink>
                     {supportUrl && (
-                        <a href={supportUrl} target="_blank" rel="noopener noreferrer" className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Support Server">
-                            <FontAwesomeIcon icon={faHeadset} size="sm" />
+                        <a href={supportUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Support Server">
+                            <FontAwesomeIcon icon={faHeadset} size="lg" />
                         </a>
                     )}
                 </div>
