@@ -1,8 +1,31 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useRouteMatch } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs, faLayerGroup, faSignOutAlt, faBars, faTimes, faUser, faBell, faSun, faMoon, faHeadset } from '@fortawesome/free-solid-svg-icons';
+import {
+    faCogs,
+    faLayerGroup,
+    faSignOutAlt,
+    faBars,
+    faTimes,
+    faUser,
+    faBell,
+    faSun,
+    faMoon,
+    faHeadset,
+    faTerminal,
+    faFolderOpen,
+    faDatabase,
+    faCalendarAlt,
+    faUsers,
+    faArchive,
+    faNetworkWired,
+    faPlay,
+    faSlidersH,
+    faHistory,
+    faExternalLinkAlt,
+    faGlobe
+} from '@fortawesome/free-solid-svg-icons';
 import { useStoreState } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
 import SearchContainer from '@/components/dashboard/search/SearchContainer';
@@ -10,6 +33,9 @@ import tw, { theme } from 'twin.macro';
 import styled from 'styled-components/macro';
 import http from '@/api/http';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import { ServerContext } from '@/state/server';
+import routes from '@/routers/routes';
+import Can from '@/components/elements/Can';
 
 const SidebarLink = styled(NavLink)`
     ${tw`flex items-center w-full px-4 py-2.5 text-neutral-400 hover:text-white hover:bg-neutral-800/40 rounded-lg transition-all duration-150 no-underline font-medium`};
@@ -25,6 +51,80 @@ const SidebarAnchor = styled.a`
 const SidebarButton = styled.button`
     ${tw`flex items-center w-full px-4 py-2.5 text-neutral-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-150 text-left font-medium`};
 `;
+
+const iconMap: Record<string, any> = {
+    'Console': faTerminal,
+    'Files': faFolderOpen,
+    'Databases': faDatabase,
+    'Schedules': faCalendarAlt,
+    'Users': faUsers,
+    'Backups': faArchive,
+    'Network': faNetworkWired,
+    'Startup': faPlay,
+    'Settings': faSlidersH,
+    'Activity': faHistory,
+    'Subdomains': faGlobe,
+};
+
+const ServerSidebarLinks = ({ setSidebarOpen }: { setSidebarOpen: (o: boolean) => void }) => {
+    const match = useRouteMatch<{ id: string }>('/server/:id');
+    const rootAdmin = useStoreState((state: ApplicationStore) => state.user.data!.rootAdmin);
+
+    if (!match) return null;
+
+    return <ServerSidebarLinksInner match={match} rootAdmin={rootAdmin} setSidebarOpen={setSidebarOpen} />;
+};
+
+const ServerSidebarLinksInner = ({ match, rootAdmin, setSidebarOpen }: { match: any, rootAdmin: boolean, setSidebarOpen: (o: boolean) => void }) => {
+    const serverName = ServerContext.useStoreState((state) => state.server.data?.name);
+    const serverId = ServerContext.useStoreState((state) => state.server.data?.internalId);
+
+    const to = (path: string) => {
+        if (path === '/') {
+            return `/server/${match.params.id}`;
+        }
+        return `/server/${match.params.id}/${path.replace(/^\/+/, '')}`;
+    };
+
+    return (
+        <>
+            <div className="h-px bg-neutral-800 my-4" />
+            <div className="text-[10px] font-bold text-neutral-500 px-4 pb-2 tracking-wider uppercase truncate" title={serverName}>
+                {serverName || 'Server Management'}
+            </div>
+            {routes.server
+                .filter((route) => !!route.name)
+                .map((route) => {
+                    const icon = iconMap[route.name!] || faLayerGroup;
+                    const content = (
+                        <SidebarLink
+                            key={route.path}
+                            to={to(route.path)}
+                            exact={route.exact}
+                            onClick={() => setSidebarOpen(false)}
+                        >
+                            <FontAwesomeIcon icon={icon} css={tw`w-5 mr-4 text-center`} />
+                            <span>{route.name}</span>
+                        </SidebarLink>
+                    );
+
+                    return route.permission ? (
+                        <Can key={route.path} action={route.permission} matchAny>
+                            {content}
+                        </Can>
+                    ) : (
+                        content
+                    );
+                })}
+            {rootAdmin && serverId && (
+                <SidebarAnchor href={`/admin/servers/view/${serverId}`} target="_blank">
+                    <FontAwesomeIcon icon={faExternalLinkAlt} css={tw`w-5 mr-4 text-center`} />
+                    <span>Admin View</span>
+                </SidebarAnchor>
+            )}
+        </>
+    );
+};
 
 export default () => {
     const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
@@ -114,6 +214,9 @@ export default () => {
 
                 {/* Navigation Links */}
                 <div css={tw`flex-1 overflow-y-auto px-3 py-4 space-y-1`}>
+                    <div className="text-[10px] font-bold text-neutral-500 px-4 pb-2 tracking-wider uppercase">
+                        Global
+                    </div>
                     <SidebarLink to="/" exact onClick={() => setSidebarOpen(false)}>
                         <FontAwesomeIcon icon={faLayerGroup} css={tw`w-5 mr-4 text-center`} />
                         <span>Dashboard</span>
@@ -124,11 +227,19 @@ export default () => {
                         <span>Account Settings</span>
                     </SidebarLink>
 
+                    <ServerSidebarLinks setSidebarOpen={setSidebarOpen} />
+
                     {rootAdmin && (
-                        <SidebarAnchor href="/admin" rel="noreferrer">
-                            <FontAwesomeIcon icon={faCogs} css={tw`w-5 mr-4 text-center`} />
-                            <span>Admin Panel</span>
-                        </SidebarAnchor>
+                        <>
+                            <div className="h-px bg-neutral-800 my-4" />
+                            <div className="text-[10px] font-bold text-neutral-500 px-4 pb-2 tracking-wider uppercase">
+                                Administration
+                            </div>
+                            <SidebarAnchor href="/admin" rel="noreferrer">
+                                <FontAwesomeIcon icon={faCogs} css={tw`w-5 mr-4 text-center`} />
+                                <span>Admin Panel</span>
+                            </SidebarAnchor>
+                        </>
                     )}
                 </div>
 
