@@ -1,0 +1,151 @@
+import tw from 'twin.macro';
+import { createGlobalStyle } from 'styled-components/macro';
+// @ts-expect-error untyped font file
+import font from '@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2';
+
+export default createGlobalStyle`
+    @font-face {
+        font-family: 'IBM Plex Sans';
+        font-style: normal;
+        font-display: swap;
+        font-weight: 100 700;
+        src: url(${font}) format('woff2-variations');
+        unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+    }
+
+    body {
+        ${tw`font-sans bg-neutral-900 text-neutral-200`};
+        letter-spacing: 0.015em;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        ${tw`font-medium tracking-normal font-header`};
+    }
+
+    p {
+        ${tw`text-neutral-200 leading-snug font-sans`};
+    }
+
+    form {
+        ${tw`m-0`};
+    }
+
+    textarea, select, input, button, button:focus, button:focus-visible {
+        ${tw`outline-none`};
+    }
+
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+        -webkit-appearance: none !important;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield !important;
+    }
+
+    /* Scroll Bar Style */
+    ::-webkit-scrollbar {
+        background: none;
+        width: 16px;
+        height: 16px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border: solid 0 rgb(0 0 0 / 0%);
+        border-right-width: 4px;
+        border-left-width: 4px;
+        -webkit-border-radius: 9px 4px;
+        -webkit-box-shadow: inset 0 0 0 1px hsl(211, 10%, 53%), inset 0 0 0 4px hsl(209deg 18% 30%);
+    }
+
+    ::-webkit-scrollbar-track-piece {
+        margin: 4px 0;
+    }
+
+    ::-webkit-scrollbar-thumb:horizontal {
+        border-right-width: 0;
+        border-left-width: 0;
+        border-top-width: 4px;
+        border-bottom-width: 4px;
+        -webkit-border-radius: 4px 9px;
+    }
+
+    ::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+
+    :root {
+        --app-bg: #07080e;
+        --card-bg: #11121c;
+        --sidebar-bg: #0b0c16;
+        --text-main: #e5e7eb;
+        --text-muted: #9ca3af;
+        --border-color: #1b1c26;
+    }
+    
+    :root.light-mode, body.light-mode {
+        --app-bg: #f9fafb;
+        --card-bg: #ffffff;
+        --sidebar-bg: #f3f4f6;
+        --text-main: #1f2937;
+        --text-muted: #6b7280;
+        --border-color: #e5e7eb;
+    }
+
+    body.light-mode {
+        background-color: var(--app-bg) !important;
+        color: var(--text-main) !important;
+    }
+    
+    body.light-mode p,
+    body.light-mode span,
+    body.light-mode h1,
+    body.light-mode h2,
+    body.light-mode h3,
+    body.light-mode h4,
+    body.light-mode h5,
+    body.light-mode h6,
+    body.light-mode label,
+    body.light-mode a:not(.btn) {
+        color: var(--text-main) !important;
+    }
+    
+    body.light-mode .bg-neutral-900,
+    body.light-mode .bg-\[\#07080e\],
+    body.light-mode .bg-\[\#0d0e16\] {
+        background-color: var(--app-bg) !important;
+    }
+    
+    body.light-mode .bg-neutral-800,
+    body.light-mode .bg-\[\#0b0c16\] {
+        background-color: var(--sidebar-bg) !important;
+    }
+    
+    body.light-mode .bg-neutral-700,
+    body.light-mode .bg-\[\#11121c\] {
+        background-color: var(--card-bg) !important;
+    }
+
+    body.light-mode .border-neutral-800,
+    body.light-mode .border-neutral-700,
+    body.light-mode .border-neutral-600 {
+        border-color: var(--border-color) !important;
+    }
+
+    body.light-mode .text-neutral-400,
+    body.light-mode .text-neutral-500 {
+        color: var(--text-muted) !important;
+    }
+
+    body.light-mode .text-neutral-300,
+    body.light-mode .text-neutral-200,
+    body.light-mode .text-neutral-100 {
+        color: var(--text-main) !important;
+    }
+
+    body.light-mode .hover\:bg-neutral-800:hover,
+    body.light-mode .hover\:bg-neutral-800\/50:hover {
+        background-color: rgba(0, 0, 0, 0.05) !important;
+    }
+`;

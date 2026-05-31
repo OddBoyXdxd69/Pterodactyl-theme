@@ -1,0 +1,186 @@
+import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCogs, faLayerGroup, faSignOutAlt, faBars, faTimes, faUser, faBell, faSun, faMoon, faHeadset } from '@fortawesome/free-solid-svg-icons';
+import { useStoreState } from 'easy-peasy';
+import { ApplicationStore } from '@/state';
+import SearchContainer from '@/components/dashboard/search/SearchContainer';
+import tw, { theme } from 'twin.macro';
+import styled from 'styled-components/macro';
+import http from '@/api/http';
+import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+
+const SidebarLink = styled(NavLink)`
+    ${tw`flex items-center px-6 py-4 text-neutral-400 hover:text-white hover:bg-neutral-800/50 border-l-4 border-transparent transition-all duration-150 no-underline`};
+    &.active {
+        ${tw`text-white bg-neutral-900/50 border-purple-500`};
+    }
+`;
+
+const SidebarAnchor = styled.a`
+    ${tw`flex items-center px-6 py-4 text-neutral-400 hover:text-white hover:bg-neutral-800/50 border-l-4 border-transparent transition-all duration-150 no-underline`};
+`;
+
+const SidebarButton = styled.button`
+    ${tw`flex items-center w-full px-6 py-4 text-neutral-400 hover:text-white hover:bg-neutral-800/50 border-l-4 border-transparent transition-all duration-150 text-left`};
+`;
+
+export default () => {
+    const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
+    const rootAdmin = useStoreState((state: ApplicationStore) => state.user.data!.rootAdmin);
+    const discordUrl = useStoreState((state: ApplicationStore) => state.settings.data!.theme?.discord_url);
+    const supportUrl = useStoreState((state: ApplicationStore) => state.settings.data!.theme?.support_url);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [isLightMode, setIsLightMode] = useState(() => {
+        return localStorage.getItem('theme') === 'light';
+    });
+
+    const toggleTheme = () => {
+        const nextLight = !isLightMode;
+        setIsLightMode(nextLight);
+        if (nextLight) {
+            localStorage.setItem('theme', 'light');
+            document.body.classList.add('light-mode');
+            document.documentElement.classList.add('light-mode');
+        } else {
+            localStorage.setItem('theme', 'dark');
+            document.body.classList.remove('light-mode');
+            document.documentElement.classList.remove('light-mode');
+        }
+    };
+
+    useEffect(() => {
+        const themeSetting = localStorage.getItem('theme');
+        if (themeSetting === 'light') {
+            document.body.classList.add('light-mode');
+            document.documentElement.classList.add('light-mode');
+        } else {
+            document.body.classList.remove('light-mode');
+            document.documentElement.classList.remove('light-mode');
+        }
+    }, []);
+
+    const onTriggerLogout = () => {
+        setIsLoggingOut(true);
+        http.post('/auth/logout').finally(() => {
+            // @ts-expect-error this is valid
+            window.location = '/';
+        });
+    };
+
+    const DiscordIcon = () => (
+        <svg viewBox="0 0 127.14 96.36" style={{ width: '16px', height: '16px', fill: 'currentColor' }}>
+            <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.43-5c.87-.64,1.71-1.32,2.51-2a76.1,76.1,0,0,0,72.76,0c.8,0.7,1.64,1.38,2.51,2a68.43,68.43,0,0,1-10.43,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31-18.83C129.87,50.22,123.63,27.31,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z" />
+        </svg>
+    );
+
+    return (
+        <>
+            <SpinnerOverlay visible={isLoggingOut} />
+
+            {/* Mobile Header Bar */}
+            <div css={tw`fixed top-0 left-0 right-0 h-16 bg-[#0b0c16] border-b border-neutral-800 flex items-center justify-between px-4 z-40 md:hidden`}>
+                <div css={tw`flex items-center`}>
+                    <button onClick={() => setSidebarOpen(!sidebarOpen)} css={tw`text-neutral-200 hover:text-white p-2 mr-2 outline-none focus:outline-none`}>
+                        <FontAwesomeIcon icon={sidebarOpen ? faTimes : faBars} size="lg" />
+                    </button>
+                    <Link to="/" css={tw`text-lg font-header font-bold text-white tracking-tight truncate max-w-[120px] no-underline`}>
+                        {name}
+                    </Link>
+                </div>
+                <div css={tw`flex items-center space-x-2 flex-shrink-0`}>
+                    {discordUrl && (
+                        <a href={discordUrl} target="_blank" rel="noopener noreferrer" className="w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Join Discord">
+                            <DiscordIcon />
+                        </a>
+                    )}
+                    <NavLink to="/account/activity" className="w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Activity / Notifications">
+                        <FontAwesomeIcon icon={faBell} size="sm" />
+                    </NavLink>
+                    <button onClick={toggleTheme} className="w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Toggle Theme">
+                        <FontAwesomeIcon icon={isLightMode ? faSun : faMoon} size="sm" />
+                    </button>
+                    {supportUrl && (
+                        <a href={supportUrl} target="_blank" rel="noopener noreferrer" className="w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Support Server">
+                            <FontAwesomeIcon icon={faHeadset} size="sm" />
+                        </a>
+                    )}
+                </div>
+            </div>
+
+            {/* Mobile Drawer Backdrop */}
+            {sidebarOpen && (
+                <div onClick={() => setSidebarOpen(false)} css={tw`fixed inset-0 bg-black bg-opacity-60 z-40 md:hidden`} />
+            )}
+
+            {/* Sidebar Navigation */}
+            <div
+                className={`fixed top-0 left-0 bottom-0 w-64 bg-[#0b0c16] border-r border-neutral-800 flex flex-col z-50 transition-transform duration-200 ease-in-out ${
+                    sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+                }`}
+            >
+                {/* Sidebar Header */}
+                <div css={tw`flex flex-col py-4 px-5 border-b border-neutral-800 bg-[#07080e]`}>
+                    <div css={tw`flex items-center justify-between w-full mb-3`}>
+                        <Link to="/" onClick={() => setSidebarOpen(false)} css={tw`text-xl font-header font-bold text-white tracking-tight truncate no-underline`}>
+                            {name}
+                        </Link>
+                    </div>
+                    <div css={tw`flex items-center space-x-2 w-full justify-between`}>
+                        {discordUrl && (
+                            <a href={discordUrl} target="_blank" rel="noopener noreferrer" className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Join Discord">
+                                <DiscordIcon />
+                            </a>
+                        )}
+                        <NavLink to="/account/activity" onClick={() => setSidebarOpen(false)} className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Activity / Notifications">
+                            <FontAwesomeIcon icon={faBell} size="sm" />
+                        </NavLink>
+                        <button onClick={toggleTheme} className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Toggle Theme">
+                            <FontAwesomeIcon icon={isLightMode ? faSun : faMoon} size="sm" />
+                        </button>
+                        {supportUrl && (
+                            <a href={supportUrl} target="_blank" rel="noopener noreferrer" className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Support Server">
+                                <FontAwesomeIcon icon={faHeadset} size="sm" />
+                            </a>
+                        )}
+                    </div>
+                </div>
+
+                {/* Sidebar Search - Desktop & Mobile */}
+                <div css={tw`p-4 border-b border-neutral-800`}>
+                    <SearchContainer />
+                </div>
+
+                {/* Navigation Links */}
+                <div css={tw`flex-1 overflow-y-auto py-4`}>
+                    <SidebarLink to="/" exact onClick={() => setSidebarOpen(false)}>
+                        <FontAwesomeIcon icon={faLayerGroup} css={tw`w-5 mr-4 text-center`} />
+                        <span>Dashboard</span>
+                    </SidebarLink>
+
+                    <SidebarLink to="/account" onClick={() => setSidebarOpen(false)}>
+                        <FontAwesomeIcon icon={faUser} css={tw`w-5 mr-4 text-center`} />
+                        <span>Account Settings</span>
+                    </SidebarLink>
+
+                    {rootAdmin && (
+                        <SidebarAnchor href="/admin" rel="noreferrer">
+                            <FontAwesomeIcon icon={faCogs} css={tw`w-5 mr-4 text-center`} />
+                            <span>Admin Panel</span>
+                        </SidebarAnchor>
+                    )}
+                </div>
+
+                {/* Sidebar Footer (Sign Out) */}
+                <div css={tw`border-t border-neutral-800 p-4`}>
+                    <SidebarButton onClick={onTriggerLogout}>
+                        <FontAwesomeIcon icon={faSignOutAlt} css={tw`w-5 mr-4 text-center`} />
+                        <span>Sign Out</span>
+                    </SidebarButton>
+                </div>
+            </div>
+        </>
+    );
+};
