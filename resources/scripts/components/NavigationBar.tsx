@@ -108,10 +108,6 @@ export default () => {
                     </Link>
                 </div>
 
-                {/* Sidebar Search - Desktop & Mobile */}
-                <div css={tw`p-4 border-b border-neutral-800`}>
-                    <SearchContainer />
-                </div>
 
                 {/* Navigation Links */}
                 <div css={tw`flex-1 overflow-y-auto py-4`}>
