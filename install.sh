@@ -35,12 +35,14 @@ fi
 # List of files to download from your repo
 files=(
   "app/Http/Controllers/Admin/Settings/ThemeController.php"
+  "app/Http/Controllers/Admin/Settings/SubdomainController.php"
   "app/Providers/SettingsServiceProvider.php"
   "app/Http/ViewComposers/AssetComposer.php"
   "resources/scripts/components/auth/LoginFormContainer.tsx"
   "resources/scripts/components/elements/PageContentBlock.tsx"
   "resources/scripts/state/settings.ts"
   "resources/views/admin/settings/theme.blade.php"
+  "resources/views/admin/settings/subdomains.blade.php"
   "resources/views/layouts/admin.blade.php"
   "resources/views/partials/admin/settings/nav.blade.php"
   "resources/views/templates/wrapper.blade.php"

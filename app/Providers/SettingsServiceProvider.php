@@ -35,6 +35,8 @@ class SettingsServiceProvider extends ServiceProvider
         'pterodactyl:theme:login_footer',
         'pterodactyl:theme:discord_url',
         'pterodactyl:theme:support_url',
+        'pterodactyl:subdomains:enabled',
+        'pterodactyl:subdomains:domains',
     ];
 
     /**

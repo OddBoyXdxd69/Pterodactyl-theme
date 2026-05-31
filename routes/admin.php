@@ -79,6 +79,9 @@ Route::group(['prefix' => 'settings'], function () {
 Route::get('/theme', [Admin\Settings\ThemeController::class, 'index'])->name('admin.theme');
 Route::patch('/theme', [Admin\Settings\ThemeController::class, 'update']);
 
+Route::get('/subdomains', [Admin\Settings\SubdomainController::class, 'index'])->name('admin.subdomains');
+Route::patch('/subdomains', [Admin\Settings\SubdomainController::class, 'update']);
+
 /*
 |--------------------------------------------------------------------------
 | User Controller Routes
