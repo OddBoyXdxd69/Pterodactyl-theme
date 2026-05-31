@@ -75,7 +75,7 @@ export default () => {
                 {/* Right Side: Grouped Boxed Icons */}
                 <div css={tw`flex items-center space-x-2 flex-shrink-0`}>
                     {discordUrl && (
-                        <a href={discordUrl} target="_blank" rel="noopener noreferrer" className="w-12 h-12 flex items-center justify-center rounded-none bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Join Discord">
+                        <a href={discordUrl} target="_blank" rel="noopener noreferrer" className="w-12 h-12 mr-3 flex items-center justify-center rounded-none bg-white border border-neutral-200 text-neutral-800 hover:text-purple-600 hover:bg-neutral-100 transition-all duration-150" title="Join Discord">
                             <DiscordIcon />
                         </a>
                     )}
