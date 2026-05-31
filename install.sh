@@ -59,6 +59,8 @@ files=(
   "resources/scripts/routers/routes.ts"
   "resources/scripts/routers/ServerRouter.tsx"
   "resources/scripts/components/server/subdomains/SubdomainsContainer.tsx"
+  "resources/scripts/components/server/files/FileManagerContainer.tsx"
+  "resources/scripts/components/server/files/PullFileButton.tsx"
 )
 
 # 2. Download and replace files

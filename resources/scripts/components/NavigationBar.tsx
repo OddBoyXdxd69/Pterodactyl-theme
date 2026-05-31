@@ -116,12 +116,6 @@ const ServerSidebarLinksInner = ({ match, rootAdmin, setSidebarOpen }: { match: 
                         content
                     );
                 })}
-            {rootAdmin && serverId && (
-                <SidebarAnchor href={`/admin/servers/view/${serverId}`} target="_blank">
-                    <FontAwesomeIcon icon={faExternalLinkAlt} css={tw`w-5 mr-4 text-center`} />
-                    <span>Admin View</span>
-                </SidebarAnchor>
-            )}
         </>
     );
 };
