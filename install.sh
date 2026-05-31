@@ -52,6 +52,13 @@ files=(
   "resources/scripts/components/elements/SubNavigation.tsx"
   "resources/scripts/components/NavigationBar.tsx"
   "resources/scripts/components/App.tsx"
+  "database/migrations/2026_05_31_100000_create_subdomains_table.php"
+  "app/Models/Subdomain.php"
+  "app/Http/Controllers/Api/Client/Servers/SubdomainController.php"
+  "routes/api-client.php"
+  "resources/scripts/routers/routes.ts"
+  "resources/scripts/routers/ServerRouter.tsx"
+  "resources/scripts/components/server/subdomains/SubdomainsContainer.tsx"
 )
 
 # 2. Download and replace files
@@ -78,8 +85,9 @@ cd "$PANEL_DIR/public/assets" && find . \( -name "*.js" -o -name "*.map" \) -typ
 cd "$PANEL_DIR"
 NODE_OPTIONS="--max-old-space-size=1536" NODE_ENV=production ./node_modules/.bin/webpack --mode production
 
-# 5. Clear cache
-echo "[*] Clearing panel caches..."
+# 5. Clear cache & run migrations
+echo "[*] Running database migrations & clearing caches..."
+php artisan migrate --force
 php artisan config:clear
 php artisan view:clear
 php artisan cache:clear
