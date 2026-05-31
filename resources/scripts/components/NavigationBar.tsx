@@ -80,30 +80,35 @@ export default () => {
         <>
             <SpinnerOverlay visible={isLoggingOut} />
 
-            {/* Mobile Header Bar */}
-            <div css={tw`fixed top-0 left-0 right-0 h-16 bg-[#0b0c16] border-b border-neutral-800 flex items-center justify-between px-4 z-40 md:hidden`}>
+            {/* Mobile & Desktop Header Topbar */}
+            <div
+                className="light-topbar fixed top-0 right-0 h-16 bg-[#0b0c16] border-b border-neutral-800 flex items-center justify-between px-4 md:px-6 z-40 left-0 md:left-64"
+            >
+                {/* Left Side: Mobile Hamburger button & Name */}
                 <div css={tw`flex items-center`}>
-                    <button onClick={() => setSidebarOpen(!sidebarOpen)} css={tw`text-neutral-200 hover:text-white p-2 mr-2 outline-none focus:outline-none`}>
+                    <button onClick={() => setSidebarOpen(!sidebarOpen)} css={tw`text-neutral-200 hover:text-white p-2 mr-2 outline-none focus:outline-none md:hidden`}>
                         <FontAwesomeIcon icon={sidebarOpen ? faTimes : faBars} size="lg" />
                     </button>
-                    <Link to="/" css={tw`text-lg font-header font-bold text-white tracking-tight truncate max-w-[120px] no-underline`}>
+                    <Link to="/" css={tw`text-lg font-header font-bold text-white tracking-tight truncate max-w-[120px] no-underline md:hidden`}>
                         {name}
                     </Link>
                 </div>
+
+                {/* Right Side: Grouped Boxed Icons */}
                 <div css={tw`flex items-center space-x-2 flex-shrink-0`}>
                     {discordUrl && (
-                        <a href={discordUrl} target="_blank" rel="noopener noreferrer" className="w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Join Discord">
+                        <a href={discordUrl} target="_blank" rel="noopener noreferrer" className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Join Discord">
                             <DiscordIcon />
                         </a>
                     )}
-                    <NavLink to="/account/activity" className="w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Activity / Notifications">
+                    <NavLink to="/account/activity" className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Activity / Notifications">
                         <FontAwesomeIcon icon={faBell} size="sm" />
                     </NavLink>
-                    <button onClick={toggleTheme} className="w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Toggle Theme">
+                    <button onClick={toggleTheme} className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Toggle Theme">
                         <FontAwesomeIcon icon={isLightMode ? faSun : faMoon} size="sm" />
                     </button>
                     {supportUrl && (
-                        <a href={supportUrl} target="_blank" rel="noopener noreferrer" className="w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Support Server">
+                        <a href={supportUrl} target="_blank" rel="noopener noreferrer" className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Support Server">
                             <FontAwesomeIcon icon={faHeadset} size="sm" />
                         </a>
                     )}
@@ -117,35 +122,15 @@ export default () => {
 
             {/* Sidebar Navigation */}
             <div
-                className={`fixed top-0 left-0 bottom-0 w-64 bg-[#0b0c16] border-r border-neutral-800 flex flex-col z-50 transition-transform duration-200 ease-in-out ${
+                className={`fixed top-0 left-0 bottom-0 w-64 bg-[#0b0c16] border-r border-neutral-800 flex flex-col z-50 transition-transform duration-200 ease-in-out theme-sidebar ${
                     sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
                 }`}
             >
                 {/* Sidebar Header */}
-                <div css={tw`flex flex-col py-4 px-5 border-b border-neutral-800 bg-[#07080e]`}>
-                    <div css={tw`flex items-center justify-between w-full mb-3`}>
-                        <Link to="/" onClick={() => setSidebarOpen(false)} css={tw`text-xl font-header font-bold text-white tracking-tight truncate no-underline`}>
-                            {name}
-                        </Link>
-                    </div>
-                    <div css={tw`flex items-center space-x-2 w-full justify-between`}>
-                        {discordUrl && (
-                            <a href={discordUrl} target="_blank" rel="noopener noreferrer" className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Join Discord">
-                                <DiscordIcon />
-                            </a>
-                        )}
-                        <NavLink to="/account/activity" onClick={() => setSidebarOpen(false)} className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Activity / Notifications">
-                            <FontAwesomeIcon icon={faBell} size="sm" />
-                        </NavLink>
-                        <button onClick={toggleTheme} className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Toggle Theme">
-                            <FontAwesomeIcon icon={isLightMode ? faSun : faMoon} size="sm" />
-                        </button>
-                        {supportUrl && (
-                            <a href={supportUrl} target="_blank" rel="noopener noreferrer" className="w-8.5 h-8.5 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Support Server">
-                                <FontAwesomeIcon icon={faHeadset} size="sm" />
-                            </a>
-                        )}
-                    </div>
+                <div css={tw`flex items-center h-16 px-6 border-b border-neutral-800 bg-[#07080e]`}>
+                    <Link to="/" onClick={() => setSidebarOpen(false)} css={tw`text-xl font-header font-bold text-white tracking-tight truncate no-underline`}>
+                        {name}
+                    </Link>
                 </div>
 
                 {/* Sidebar Search - Desktop & Mobile */}

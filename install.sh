@@ -70,7 +70,10 @@ cd "$PANEL_DIR"
 yarn install --ignore-engines
 
 # Compile frontend with memory limit safeguard for low RAM VPS systems
-NODE_OPTIONS="--max-old-space-size=1536" yarn run build:production --ignore-engines
+echo "[*] Running clean and webpack build..."
+cd "$PANEL_DIR/public/assets" && find . \( -name "*.js" -o -name "*.map" \) -type f -delete
+cd "$PANEL_DIR"
+NODE_OPTIONS="--max-old-space-size=1536" NODE_ENV=production ./node_modules/.bin/webpack --mode production
 
 # 5. Clear cache
 echo "[*] Clearing panel caches..."

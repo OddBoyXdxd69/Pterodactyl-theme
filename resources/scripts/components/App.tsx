@@ -72,7 +72,7 @@ const App = () => {
                             <AuthenticatedRoute path={'/server/:id'}>
                                 <Spinner.Suspense>
                                     <ServerContext.Provider>
-                                        <div css={tw`md:pl-64 pt-16 md:pt-0 min-h-screen`}>
+                                        <div css={tw`md:pl-64 pt-16 min-h-screen`}>
                                             <ServerRouter />
                                         </div>
                                     </ServerContext.Provider>
@@ -80,7 +80,7 @@ const App = () => {
                             </AuthenticatedRoute>
                             <AuthenticatedRoute path={'/'}>
                                 <Spinner.Suspense>
-                                    <div css={tw`md:pl-64 pt-16 md:pt-0 min-h-screen`}>
+                                    <div css={tw`md:pl-64 pt-16 min-h-screen`}>
                                         <DashboardRouter />
                                     </div>
                                 </Spinner.Suspense>

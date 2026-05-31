@@ -89,7 +89,7 @@ export default createGlobalStyle`
         --card-bg: #ffffff;
         --sidebar-bg: #f3f4f6;
         --text-main: #1f2937;
-        --text-muted: #6b7280;
+        --text-muted: #4b5563;
         --border-color: #e5e7eb;
     }
 
@@ -98,54 +98,168 @@ export default createGlobalStyle`
         color: var(--text-main) !important;
     }
     
-    body.light-mode p,
-    body.light-mode span,
-    body.light-mode h1,
-    body.light-mode h2,
-    body.light-mode h3,
-    body.light-mode h4,
-    body.light-mode h5,
-    body.light-mode h6,
-    body.light-mode label,
-    body.light-mode a:not(.btn) {
+    /* Text Color Overrides for Light Mode */
+    body.light-mode p:not(.theme-sidebar *):not(.alert *):not([class*="Alert"] *),
+    body.light-mode h1:not(.theme-sidebar *),
+    body.light-mode h2:not(.theme-sidebar *),
+    body.light-mode h3:not(.theme-sidebar *),
+    body.light-mode h4:not(.theme-sidebar *),
+    body.light-mode h5:not(.theme-sidebar *),
+    body.light-mode h6:not(.theme-sidebar *),
+    body.light-mode label:not(.theme-sidebar *),
+    body.light-mode span:not(.theme-sidebar *):not(button *):not([class*="ButtonStyle"] *):not(.btn *):not([class*="Badge"] *):not(.badge *):not([class*="status"] *):not([class*="status-"] *):not(.alert *):not([class*="Alert"] *),
+    body.light-mode a:not(.btn):not(.sidebar-link-text):not(.theme-sidebar *):not(button *):not([class*="ButtonStyle"] *):not([class*="SubNavigation"] > div > a) {
         color: var(--text-main) !important;
     }
+
+    /* Topbar Styles in Light Mode */
+    body.light-mode .light-topbar {
+        background-color: #ffffff !important;
+        border-color: #e5e7eb !important;
+    }
+    body.light-mode .light-topbar a,
+    body.light-mode .light-topbar button,
+    body.light-mode .light-topbar svg {
+        color: #4b5563 !important;
+    }
+    body.light-mode .light-topbar a:hover,
+    body.light-mode .light-topbar button:hover {
+        color: #8b5cf6 !important;
+        background-color: #f3f4f6 !important;
+    }
+    body.light-mode .light-topbar .bg-neutral-900 {
+        background-color: #f3f4f6 !important;
+        border-color: #e5e7eb !important;
+    }
     
-    body.light-mode .bg-neutral-900,
-    body.light-mode .bg-\[\#07080e\],
-    body.light-mode .bg-\[\#0d0e16\] {
+    /* Background Overrides for Light Mode (Excluding theme-sidebar) */
+    body.light-mode .bg-neutral-900:not(.theme-sidebar *),
+    body.light-mode .bg-\[\#07080e\]:not(.theme-sidebar):not(.theme-sidebar *),
+    body.light-mode .bg-\[\#0d0e16\]:not(.theme-sidebar *) {
         background-color: var(--app-bg) !important;
     }
     
-    body.light-mode .bg-neutral-800,
-    body.light-mode .bg-\[\#0b0c16\] {
-        background-color: var(--sidebar-bg) !important;
+    body.light-mode .bg-neutral-800:not(.theme-sidebar *),
+    body.light-mode .bg-\[\#0b0c16\]:not(.theme-sidebar):not(.theme-sidebar *) {
+        background-color: var(--card-bg) !important;
     }
     
-    body.light-mode .bg-neutral-700,
-    body.light-mode .bg-\[\#11121c\] {
+    body.light-mode .bg-neutral-700:not(.theme-sidebar *),
+    body.light-mode .bg-\[\#11121c\]:not(.theme-sidebar *) {
         background-color: var(--card-bg) !important;
     }
 
-    body.light-mode .border-neutral-800,
-    body.light-mode .border-neutral-700,
-    body.light-mode .border-neutral-600 {
+    body.light-mode .bg-neutral-600:not(.theme-sidebar *) {
+        background-color: #f3f4f6 !important;
+    }
+
+    /* Border Overrides for Light Mode */
+    body.light-mode .border-neutral-800:not(.theme-sidebar *),
+    body.light-mode .border-neutral-700:not(.theme-sidebar *),
+    body.light-mode .border-neutral-600:not(.theme-sidebar *) {
         border-color: var(--border-color) !important;
     }
 
-    body.light-mode .text-neutral-400,
-    body.light-mode .text-neutral-500 {
+    /* Text Helper Classes Overrides for Light Mode (Excluding theme-sidebar) */
+    body.light-mode .text-neutral-400:not(.theme-sidebar *):not(button *):not([class*="ButtonStyle"] *):not(.btn *),
+    body.light-mode .text-neutral-500:not(.theme-sidebar *):not(button *):not([class*="ButtonStyle"] *):not(.btn *) {
         color: var(--text-muted) !important;
     }
 
-    body.light-mode .text-neutral-300,
-    body.light-mode .text-neutral-200,
-    body.light-mode .text-neutral-100 {
+    body.light-mode .text-neutral-300:not(.theme-sidebar *):not(button *):not([class*="ButtonStyle"] *):not(.btn *),
+    body.light-mode .text-neutral-200:not(.theme-sidebar *):not(button *):not([class*="ButtonStyle"] *):not(.btn *),
+    body.light-mode .text-neutral-100:not(.theme-sidebar *):not(button *):not([class*="ButtonStyle"] *):not(.btn *) {
         color: var(--text-main) !important;
     }
 
-    body.light-mode .hover\:bg-neutral-800:hover,
-    body.light-mode .hover\:bg-neutral-800\/50:hover {
-        background-color: rgba(0, 0, 0, 0.05) !important;
+    /* Hover State Overrides for Light Mode */
+    body.light-mode .hover\:bg-neutral-800:hover:not(.theme-sidebar *),
+    body.light-mode .hover\:bg-neutral-800\/50:hover:not(.theme-sidebar *) {
+        background-color: rgba(0, 0, 0, 0.03) !important;
+    }
+
+    /* Keep Terminal and Code Editors Dark in Light Mode */
+    body.light-mode .terminal,
+    body.light-mode .xterm-rows,
+    body.light-mode .CodeMirror,
+    body.light-mode .bg-black {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+    }
+    body.light-mode .terminal span,
+    body.light-mode .xterm-rows span,
+    body.light-mode .CodeMirror span {
+        color: inherit !important;
+    }
+
+    /* Explicit Reset for theme-sidebar to Remain Perfectly Dark */
+    body.light-mode .theme-sidebar {
+        background-color: #0b0c16 !important;
+        border-color: #1b1c26 !important;
+    }
+    body.light-mode .theme-sidebar div {
+        border-color: #1b1c26 !important;
+    }
+    body.light-mode .theme-sidebar .bg-\[\#07080e\] {
+        background-color: #07080e !important;
+    }
+    body.light-mode .theme-sidebar a,
+    body.light-mode .theme-sidebar button,
+    body.light-mode .theme-sidebar span,
+    body.light-mode .theme-sidebar svg {
+        color: #9ca3af !important;
+    }
+    body.light-mode .theme-sidebar a:hover,
+    body.light-mode .theme-sidebar button:hover,
+    body.light-mode .theme-sidebar a:hover span,
+    body.light-mode .theme-sidebar button:hover span,
+    body.light-mode .theme-sidebar a:hover svg,
+    body.light-mode .theme-sidebar button:hover svg {
+        color: #ffffff !important;
+        background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    body.light-mode .theme-sidebar a.active,
+    body.light-mode .theme-sidebar a.active span,
+    body.light-mode .theme-sidebar a.active svg {
+        color: #ffffff !important;
+        background-color: rgba(0, 0, 0, 0.25) !important;
+        border-left-color: #8b5cf6 !important;
+    }
+    body.light-mode .theme-sidebar .font-bold {
+        color: #ffffff !important;
+    }
+
+    /* Form Fields Styling in Light Mode */
+    body.light-mode input:not([type="checkbox"]):not([type="radio"]),
+    body.light-mode textarea,
+    body.light-mode select {
+        background-color: #f3f4f6 !important;
+        border-color: #e5e7eb !important;
+        color: #1f2937 !important;
+    }
+    body.light-mode input:not([type="checkbox"]):not([type="radio"]):hover,
+    body.light-mode textarea:hover,
+    body.light-mode select:hover {
+        border-color: #d1d5db !important;
+    }
+    body.light-mode input:not([type="checkbox"]):not([type="radio"]):focus,
+    body.light-mode textarea:focus,
+    body.light-mode select:focus {
+        background-color: #ffffff !important;
+        border-color: #8b5cf6 !important;
+    }
+
+    /* SubNavigation Tabs in Light Mode */
+    body.light-mode [class*="SubNavigation"] > div > a {
+        color: var(--text-muted) !important;
+    }
+    body.light-mode [class*="SubNavigation"] > div > a:hover {
+        color: var(--text-main) !important;
+        background-color: rgba(0, 0, 0, 0.02) !important;
+    }
+    body.light-mode [class*="SubNavigation"] > div > a.active {
+        color: #8b5cf6 !important;
+        box-shadow: inset 0 -2px #8b5cf6 !important;
+        background-color: transparent !important;
     }
 `;
