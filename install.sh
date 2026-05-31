@@ -61,7 +61,8 @@ for file in "${files[@]}"; do
 done
 
 # 3. Update permissions
-echo "[*] Setting correct folder ownership..."
+echo "[*] Creating branding directory & setting folder ownership..."
+mkdir -p "$PANEL_DIR/public/assets/branding"
 chown -R www-data:www-data "$PANEL_DIR"/*
 
 # 4. Install dependencies and compile assets

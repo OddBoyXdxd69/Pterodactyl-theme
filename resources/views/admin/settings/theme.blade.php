@@ -19,7 +19,7 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">Theme Settings</h3>
                 </div>
-                <form action="{{ route('admin.theme') }}" method="POST">
+                <form action="{{ route('admin.theme') }}" method="POST" enctype="multipart/form-data">
                     <div class="box-body">
                         <div class="row">
                             <div class="form-group col-md-4">
@@ -28,12 +28,20 @@
                                     <input type="text" class="form-control" name="pterodactyl:theme:favicon" value="{{ old('pterodactyl:theme:favicon', config('pterodactyl.theme.favicon')) }}" placeholder="/favicons/favicon.ico" />
                                     <p class="text-muted"><small>The URL of your custom favicon icon file.</small></p>
                                 </div>
+                                <div style="margin-top: 10px;">
+                                    <label class="control-label">Or Upload Favicon</label>
+                                    <input type="file" class="form-control" name="favicon_file" accept="image/*" />
+                                </div>
                             </div>
                             <div class="form-group col-md-4">
                                 <label class="control-label">Login Page Logo URL</label>
                                 <div>
                                     <input type="text" class="form-control" name="pterodactyl:theme:login_logo" value="{{ old('pterodactyl:theme:login_logo', config('pterodactyl.theme.login_logo')) }}" placeholder="/assets/svgs/pterodactyl.svg" />
                                     <p class="text-muted"><small>The URL of the logo displayed on the login and auth pages.</small></p>
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <label class="control-label">Or Upload Logo</label>
+                                    <input type="file" class="form-control" name="login_logo_file" accept="image/*" />
                                 </div>
                             </div>
                             <div class="form-group col-md-4">

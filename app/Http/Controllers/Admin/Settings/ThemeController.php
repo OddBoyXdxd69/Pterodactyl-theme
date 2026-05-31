@@ -41,9 +41,35 @@ class ThemeController extends Controller
             'pterodactyl:theme:login_footer' => 'nullable|string',
             'pterodactyl:theme:discord_url' => 'nullable|url',
             'pterodactyl:theme:support_url' => 'nullable|url',
+            'favicon_file' => 'nullable|image|mimes:png,jpg,jpeg,ico,gif,svg|max:2048',
+            'login_logo_file' => 'nullable|image|mimes:png,jpg,jpeg,gif,svg|max:2048',
         ]);
 
-        foreach ($request->only(['pterodactyl:theme:favicon', 'pterodactyl:theme:login_logo', 'pterodactyl:theme:login_footer', 'pterodactyl:theme:discord_url', 'pterodactyl:theme:support_url']) as $key => $value) {
+        if ($request->hasFile('favicon_file')) {
+            $file = $request->file('favicon_file');
+            $filename = 'favicon_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('assets/branding'), $filename);
+            $faviconUrl = '/assets/branding/' . $filename;
+            $this->settings->set('settings::pterodactyl:theme:favicon', $faviconUrl);
+        }
+
+        if ($request->hasFile('login_logo_file')) {
+            $file = $request->file('login_logo_file');
+            $filename = 'login_logo_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('assets/branding'), $filename);
+            $logoUrl = '/assets/branding/' . $filename;
+            $this->settings->set('settings::pterodactyl:theme:login_logo', $logoUrl);
+        }
+
+        $keys = ['pterodactyl:theme:login_footer', 'pterodactyl:theme:discord_url', 'pterodactyl:theme:support_url'];
+        if (!$request->hasFile('favicon_file')) {
+            $keys[] = 'pterodactyl:theme:favicon';
+        }
+        if (!$request->hasFile('login_logo_file')) {
+            $keys[] = 'pterodactyl:theme:login_logo';
+        }
+
+        foreach ($request->only($keys) as $key => $value) {
             $this->settings->set('settings::' . $key, $value ?? '');
         }
 
