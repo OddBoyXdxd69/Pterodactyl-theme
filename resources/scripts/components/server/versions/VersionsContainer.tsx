@@ -229,6 +229,7 @@ export default () => {
                 })
                 .then((data) => {
                     const list: VersionItem[] = (data.versions || [])
+                        .filter((v: string) => !v.includes('-'))
                         .map((v: string) => ({
                             id: v,
                             name: v,
@@ -251,6 +252,7 @@ export default () => {
                 })
                 .then((data) => {
                     const list: VersionItem[] = (data.versions || [])
+                        .filter((v: string) => !v.includes('-'))
                         .map((v: string) => ({
                             id: v,
                             name: v,
