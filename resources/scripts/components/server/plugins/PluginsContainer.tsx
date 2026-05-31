@@ -54,6 +54,7 @@ export default () => {
     const [showModal, setShowModal] = useState(false);
     const [selectedPlugin, setSelectedPlugin] = useState<PluginItem | null>(null);
     const [versions, setVersions] = useState<VersionItem[]>([]);
+    const [visibleCount, setVisibleCount] = useState(20);
     const [loadingVersions, setLoadingVersions] = useState(false);
     const [installingVersionId, setInstallingVersionId] = useState<string | null>(null);
 
@@ -196,6 +197,7 @@ export default () => {
     const openInstallModal = (plugin: PluginItem) => {
         setSelectedPlugin(plugin);
         setVersions([]);
+        setVisibleCount(20);
         setLoadingVersions(true);
         setShowModal(true);
 
@@ -224,7 +226,7 @@ export default () => {
                 })
                 .finally(() => setLoadingVersions(false));
         } else if (plugin.source === 'spiget') {
-            fetch(`https://api.spiget.org/v2/resources/${plugin.id}/versions?size=15`)
+            fetch(`https://api.spiget.org/v2/resources/${plugin.id}/versions?size=100`)
                 .then((res) => res.json())
                 .then((data) => {
                     if (data.error) {
@@ -249,7 +251,7 @@ export default () => {
                 })
                 .finally(() => setLoadingVersions(false));
         } else if (plugin.source === 'hangar') {
-            fetch(`https://hangar.papermc.io/api/v1/projects/${plugin.owner}/${plugin.slug}/versions?limit=15`)
+            fetch(`https://hangar.papermc.io/api/v1/projects/${plugin.owner}/${plugin.slug}/versions?limit=100`)
                 .then((res) => res.json())
                 .then((data) => {
                     const list: VersionItem[] = (data.result || []).map((v: any) => {
@@ -479,48 +481,58 @@ export default () => {
                                     <p>No compatible versions found for this plugin.</p>
                                 </div>
                             ) : (
-                                versions.map((v) => (
-                                    <div key={v.id} css={tw`flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-neutral-800 border border-neutral-700/60 rounded-lg gap-4 hover:border-purple-500 transition-colors`}>
-                                        <div css={tw`flex-1 space-y-1`}>
-                                            <div css={tw`flex items-center space-x-2`}>
-                                                <strong css={tw`text-purple-400 text-sm font-mono`}>{v.versionNumber}</strong>
-                                                <span css={tw`text-[10px] bg-neutral-700 px-2 py-0.5 rounded text-neutral-300 font-semibold truncate max-w-[200px]`} title={v.name}>
-                                                    {v.name}
-                                                </span>
+                                <>
+                                    {versions.slice(0, visibleCount).map((v) => (
+                                        <div key={v.id} css={tw`flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-neutral-800 border border-neutral-700/60 rounded-lg gap-4 hover:border-purple-500 transition-colors`}>
+                                            <div css={tw`flex-1 space-y-1`}>
+                                                <div css={tw`flex items-center space-x-2`}>
+                                                    <strong css={tw`text-purple-400 text-sm font-mono`}>{v.versionNumber}</strong>
+                                                    <span css={tw`text-[10px] bg-neutral-700 px-2 py-0.5 rounded text-neutral-300 font-semibold truncate max-w-[200px]`} title={v.name}>
+                                                        {v.name}
+                                                    </span>
+                                                </div>
+                                                <div css={tw`text-xs text-neutral-400 flex flex-col space-y-0.5`}>
+                                                    <span css={tw`flex items-center gap-1.5`}>
+                                                        <FontAwesomeIcon icon={faCalendarAlt} css={tw`w-3 text-neutral-500`} />
+                                                        Released: {v.date}
+                                                    </span>
+                                                    <span css={tw`flex items-center gap-1.5`}>
+                                                        <FontAwesomeIcon icon={faCodeBranch} css={tw`w-3 text-neutral-500`} />
+                                                        Loaders: <strong css={tw`text-gray-300`}>{v.loaders || 'N/A'}</strong>
+                                                    </span>
+                                                    <span css={tw`flex items-center gap-1.5`}>
+                                                        <FontAwesomeIcon icon={faGlobe} css={tw`w-3 text-neutral-500`} />
+                                                        Game Versions: <strong css={tw`text-gray-300`}>{v.gameVersions || 'Compatible'}</strong>
+                                                    </span>
+                                                </div>
                                             </div>
-                                            <div css={tw`text-xs text-neutral-400 flex flex-col space-y-0.5`}>
-                                                <span css={tw`flex items-center gap-1.5`}>
-                                                    <FontAwesomeIcon icon={faCalendarAlt} css={tw`w-3 text-neutral-500`} />
-                                                    Released: {v.date}
-                                                </span>
-                                                <span css={tw`flex items-center gap-1.5`}>
-                                                    <FontAwesomeIcon icon={faCodeBranch} css={tw`w-3 text-neutral-500`} />
-                                                    Loaders: <strong css={tw`text-gray-300`}>{v.loaders || 'N/A'}</strong>
-                                                </span>
-                                                <span css={tw`flex items-center gap-1.5`}>
-                                                    <FontAwesomeIcon icon={faGlobe} css={tw`w-3 text-neutral-500`} />
-                                                    Game Versions: <strong css={tw`text-gray-300`}>{v.gameVersions || 'Compatible'}</strong>
-                                                </span>
+                                            <div css={tw`flex-shrink-0 self-start sm:self-center`}>
+                                                {installingVersionId === v.id ? (
+                                                    <Button disabled css={tw`p-2 px-4 flex items-center space-x-2`}>
+                                                        <Spinner size={'small'} />
+                                                        <span>Installing...</span>
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        onClick={() => triggerDownload(v)}
+                                                        css={tw`p-2 px-4 flex items-center space-x-2`}
+                                                    >
+                                                        <FontAwesomeIcon icon={faDownload} />
+                                                        <span>Install</span>
+                                                    </Button>
+                                                )}
                                             </div>
                                         </div>
-                                        <div css={tw`flex-shrink-0 self-start sm:self-center`}>
-                                            {installingVersionId === v.id ? (
-                                                <Button disabled css={tw`p-2 px-4 flex items-center space-x-2`}>
-                                                    <Spinner size={'small'} />
-                                                    <span>Installing...</span>
-                                                </Button>
-                                            ) : (
-                                                <Button
-                                                    onClick={() => triggerDownload(v)}
-                                                    css={tw`p-2 px-4 flex items-center space-x-2`}
-                                                >
-                                                    <FontAwesomeIcon icon={faDownload} />
-                                                    <span>Install</span>
-                                                </Button>
-                                            )}
+                                    ))}
+
+                                    {versions.length > visibleCount && (
+                                        <div css={tw`flex justify-center pt-2`}>
+                                            <Button onClick={() => setVisibleCount((prev) => prev + 20)} css={tw`w-full`}>
+                                                Show More Versions
+                                            </Button>
                                         </div>
-                                    </div>
-                                ))
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
