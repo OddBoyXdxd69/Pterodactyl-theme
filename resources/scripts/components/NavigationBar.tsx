@@ -12,18 +12,18 @@ import http from '@/api/http';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 
 const SidebarLink = styled(NavLink)`
-    ${tw`flex items-center px-6 py-4 text-neutral-400 hover:text-white hover:bg-neutral-800/50 border-l-4 border-transparent transition-all duration-150 no-underline`};
+    ${tw`flex items-center w-full px-4 py-2.5 text-neutral-400 hover:text-white hover:bg-neutral-800/40 rounded-lg transition-all duration-150 no-underline font-medium`};
     &.active {
-        ${tw`text-white bg-neutral-900/50 border-purple-500`};
+        ${tw`text-white bg-purple-600 hover:bg-purple-700 shadow-md shadow-purple-600/10`};
     }
 `;
 
 const SidebarAnchor = styled.a`
-    ${tw`flex items-center px-6 py-4 text-neutral-400 hover:text-white hover:bg-neutral-800/50 border-l-4 border-transparent transition-all duration-150 no-underline`};
+    ${tw`flex items-center w-full px-4 py-2.5 text-neutral-400 hover:text-white hover:bg-neutral-800/40 rounded-lg transition-all duration-150 no-underline font-medium`};
 `;
 
 const SidebarButton = styled.button`
-    ${tw`flex items-center w-full px-6 py-4 text-neutral-400 hover:text-white hover:bg-neutral-800/50 border-l-4 border-transparent transition-all duration-150 text-left`};
+    ${tw`flex items-center w-full px-4 py-2.5 text-neutral-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-150 text-left font-medium`};
 `;
 
 export default () => {
@@ -113,7 +113,7 @@ export default () => {
 
 
                 {/* Navigation Links */}
-                <div css={tw`flex-1 overflow-y-auto py-4`}>
+                <div css={tw`flex-1 overflow-y-auto px-3 py-4 space-y-1`}>
                     <SidebarLink to="/" exact onClick={() => setSidebarOpen(false)}>
                         <FontAwesomeIcon icon={faLayerGroup} css={tw`w-5 mr-4 text-center`} />
                         <span>Dashboard</span>
@@ -133,7 +133,7 @@ export default () => {
                 </div>
 
                 {/* Sidebar Footer (Sign Out) */}
-                <div css={tw`border-t border-neutral-800 p-4`}>
+                <div css={tw`border-t border-neutral-800 p-3`}>
                     <SidebarButton onClick={onTriggerLogout}>
                         <FontAwesomeIcon icon={faSignOutAlt} css={tw`w-5 mr-4 text-center`} />
                         <span>Sign Out</span>
