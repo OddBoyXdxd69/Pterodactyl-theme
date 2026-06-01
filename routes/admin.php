@@ -94,6 +94,9 @@ Route::post('/tickets/{ticket}/close', [Admin\Settings\TicketsController::class,
 Route::post('/tickets/{ticket}/review', [Admin\Settings\TicketsController::class, 'review'])->name('admin.tickets.review');
 Route::delete('/tickets/{ticket}', [Admin\Settings\TicketsController::class, 'delete'])->name('admin.tickets.delete');
 
+Route::get('/registration', [Admin\Settings\RegistrationConfigController::class, 'index'])->name('admin.registration');
+Route::patch('/registration', [Admin\Settings\RegistrationConfigController::class, 'update']);
+
 /*
 |--------------------------------------------------------------------------
 | User Controller Routes

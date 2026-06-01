@@ -91,6 +91,11 @@
                                 <i class="fa fa-paint-brush"></i> <span>Theme Settings</span>
                             </a>
                         </li>
+                        <li class="{{ Route::currentRouteName() !== 'admin.registration' ?: 'active' }}">
+                            <a href="{{ route('admin.registration') }}">
+                                <i class="fa fa-user-plus"></i> <span>Register Config</span>
+                            </a>
+                        </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.subdomains') ?: 'active' }}">
                             <a href="{{ route('admin.subdomains') }}">
                                 <i class="fa fa-link"></i> <span>Subdomains</span>

@@ -100,6 +100,9 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
         >
             {({ isSubmitting, setSubmitting, submitForm }) => (
                 <LoginFormContainer title={'Create an Account'} css={tw`w-full flex`}>
+                    <p css={tw`text-sm text-neutral-400 mb-6 text-center md:-mt-2`}>
+                        Enter your details below to register your account.
+                    </p>
                     <div css={tw`grid grid-cols-1 md:grid-cols-2 gap-x-4`}>
                         <Field type={'text'} label={'First Name'} name={'name_first'} disabled={isSubmitting} />
                         <div css={tw`mt-4 md:mt-0`}>

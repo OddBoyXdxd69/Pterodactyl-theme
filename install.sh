@@ -93,6 +93,8 @@ files=(
   "resources/scripts/components/auth/LoginContainer.tsx"
   "resources/scripts/components/auth/RegisterContainer.tsx"
   "resources/scripts/routers/AuthenticationRouter.tsx"
+  "app/Http/Controllers/Admin/Settings/RegistrationConfigController.php"
+  "resources/views/admin/settings/registration.blade.php"
 )
 
 # 2. Download and replace files
