@@ -13,6 +13,9 @@ export interface SiteSettings {
         discord_url?: string;
         support_url?: string;
     };
+    registration?: {
+        enabled: boolean;
+    };
 }
 
 export interface SettingsStore {

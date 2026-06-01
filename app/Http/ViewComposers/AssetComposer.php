@@ -45,6 +45,9 @@ class AssetComposer
                 'limit' => (int) config('pterodactyl.tickets.limit', 3),
                 'message_limit' => (int) config('pterodactyl.tickets.message_limit', 10),
             ],
+            'registration' => [
+                'enabled' => (bool) config('pterodactyl.registration.enabled', false),
+            ],
         ]);
     }
 }

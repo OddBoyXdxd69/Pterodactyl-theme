@@ -63,6 +63,16 @@
                                     <p class="text-muted"><small>The Discord link displayed alongside your panel name in the client sidebar.</small></p>
                                 </div>
                             </div>
+                            <div class="form-group col-md-12" style="margin-top: 15px;">
+                                <label class="control-label">User Registration Portal</label>
+                                <div>
+                                    <select class="form-control" name="pterodactyl:registration:enabled">
+                                        <option value="1" {{ old('pterodactyl:registration:enabled', config('pterodactyl.registration.enabled', false)) ? 'selected' : '' }}>Enabled (Allow users to register at /auth/register)</option>
+                                        <option value="0" {{ !old('pterodactyl:registration:enabled', config('pterodactyl.registration.enabled', false)) ? 'selected' : '' }}>Disabled</option>
+                                    </select>
+                                    <p class="text-muted"><small>Enable or disable the self-service user registration page. If disabled, the sign-up link will be hidden on the login page.</small></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="box-footer">

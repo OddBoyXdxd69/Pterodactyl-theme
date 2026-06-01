@@ -40,6 +40,7 @@ class ThemeController extends Controller
             'pterodactyl:theme:login_logo' => 'nullable|string',
             'pterodactyl:theme:login_footer' => 'nullable|string',
             'pterodactyl:theme:discord_url' => 'nullable|url',
+            'pterodactyl:registration:enabled' => 'required|in:0,1',
             'favicon_file' => 'nullable|image|mimes:png,jpg,jpeg,ico,gif,svg|max:2048',
             'login_logo_file' => 'nullable|image|mimes:png,jpg,jpeg,gif,svg|max:2048',
         ]);
@@ -60,7 +61,7 @@ class ThemeController extends Controller
             $this->settings->set('settings::pterodactyl:theme:login_logo', $logoUrl);
         }
 
-        $keys = ['pterodactyl:theme:login_footer', 'pterodactyl:theme:discord_url'];
+        $keys = ['pterodactyl:theme:login_footer', 'pterodactyl:theme:discord_url', 'pterodactyl:registration:enabled'];
         if (!$request->hasFile('favicon_file')) {
             $keys[] = 'pterodactyl:theme:favicon';
         }

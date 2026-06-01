@@ -87,6 +87,12 @@ files=(
   "resources/scripts/routers/DashboardRouter.tsx"
   "resources/scripts/components/dashboard/SupportContainer.tsx"
   "resources/views/admin/index.blade.php"
+  "app/Http/Controllers/Auth/RegisterController.php"
+  "routes/auth.php"
+  "resources/scripts/api/auth/register.ts"
+  "resources/scripts/components/auth/LoginContainer.tsx"
+  "resources/scripts/components/auth/RegisterContainer.tsx"
+  "resources/scripts/routers/AuthenticationRouter.tsx"
 )
 
 # 2. Download and replace files
