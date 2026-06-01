@@ -4,6 +4,13 @@ import tw, { theme } from 'twin.macro';
 const SubNavigation = styled.div`
     ${tw`w-full bg-neutral-800 shadow overflow-x-auto border-b border-neutral-700`};
 
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
     & > div {
         ${tw`flex items-center text-sm mx-auto px-2`};
         max-width: 1200px;
