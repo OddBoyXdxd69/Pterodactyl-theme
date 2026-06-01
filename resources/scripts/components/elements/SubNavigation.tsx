@@ -4,11 +4,22 @@ import tw, { theme } from 'twin.macro';
 const SubNavigation = styled.div`
     ${tw`w-full bg-neutral-800 shadow overflow-x-auto border-b border-neutral-700`};
 
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
 
     &::-webkit-scrollbar {
-        display: none;
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        background: transparent !important;
+    }
+    &::-webkit-scrollbar-thumb {
+        display: none !important;
+        background: transparent !important;
+    }
+    &::-webkit-scrollbar-track {
+        display: none !important;
+        background: transparent !important;
     }
 
     & > div {
