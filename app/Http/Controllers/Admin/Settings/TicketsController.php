@@ -24,7 +24,16 @@ class TicketsController extends Controller
      */
     public function index(): View
     {
-        Ticket::where('updated_at', '<', now()->subDays(2))->delete();
+        $inactiveDays = (int) config('pterodactyl.tickets.clear_inactive_days', 2);
+        $closedDays = (int) config('pterodactyl.tickets.clear_closed_days', 1);
+
+        Ticket::whereIn('status', ['open', 'review'])
+            ->where('updated_at', '<', now()->subDays($inactiveDays))
+            ->delete();
+
+        Ticket::where('status', 'closed')
+            ->where('updated_at', '<', now()->subDays($closedDays))
+            ->delete();
 
         $tickets = Ticket::with(['user'])->orderBy('status', 'asc')->orderBy('updated_at', 'desc')->paginate(20);
 

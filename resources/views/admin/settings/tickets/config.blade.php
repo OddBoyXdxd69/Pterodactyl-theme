@@ -47,6 +47,20 @@
                                     <p class="text-muted"><small>The message cap a user can send inside a ticket while it remains under "Open" status. (Once staff puts the ticket "Under Review", users have infinite chat access).</small></p>
                                 </div>
                             </div>
+                            <div class="form-group col-md-6">
+                                <label class="control-label">Clear Inactive Tickets After (Days)</label>
+                                <div>
+                                    <input type="number" class="form-control" name="pterodactyl:tickets:clear_inactive_days" value="{{ old('pterodactyl:tickets:clear_inactive_days', config('pterodactyl.tickets.clear_inactive_days', 2)) }}" min="1" max="365" required />
+                                    <p class="text-muted"><small>Automatically delete open or under-review support tickets that have had no user or admin activity/messages for this number of days.</small></p>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="control-label">Clear Closed Tickets After (Days)</label>
+                                <div>
+                                    <input type="number" class="form-control" name="pterodactyl:tickets:clear_closed_days" value="{{ old('pterodactyl:tickets:clear_closed_days', config('pterodactyl.tickets.clear_closed_days', 1)) }}" min="1" max="365" required />
+                                    <p class="text-muted"><small>Automatically delete resolved/closed support tickets and their chat logs after this number of days.</small></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="box-footer">

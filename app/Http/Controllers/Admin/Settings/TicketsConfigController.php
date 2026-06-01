@@ -39,11 +39,15 @@ class TicketsConfigController extends Controller
             'pterodactyl:tickets:enabled' => 'required|in:0,1',
             'pterodactyl:tickets:limit' => 'required|integer|min:1|max:100',
             'pterodactyl:tickets:message_limit' => 'required|integer|min:1|max:1000',
+            'pterodactyl:tickets:clear_inactive_days' => 'required|integer|min:1|max:365',
+            'pterodactyl:tickets:clear_closed_days' => 'required|integer|min:1|max:365',
         ]);
 
         $this->settings->set('settings::pterodactyl:tickets:enabled', $request->input('pterodactyl:tickets:enabled'));
         $this->settings->set('settings::pterodactyl:tickets:limit', $request->input('pterodactyl:tickets:limit'));
         $this->settings->set('settings::pterodactyl:tickets:message_limit', $request->input('pterodactyl:tickets:message_limit'));
+        $this->settings->set('settings::pterodactyl:tickets:clear_inactive_days', $request->input('pterodactyl:tickets:clear_inactive_days'));
+        $this->settings->set('settings::pterodactyl:tickets:clear_closed_days', $request->input('pterodactyl:tickets:clear_closed_days'));
 
         $this->kernel->call('queue:restart');
         $this->alert->success('Support ticket system configurations have been updated successfully and the queue worker was restarted.')->flash();

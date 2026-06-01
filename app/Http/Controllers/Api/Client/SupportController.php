@@ -19,8 +19,17 @@ class SupportController extends ClientApiController
             abort(403, 'The support ticket system is currently disabled by administrator.');
         }
 
-        // Clean up tickets that have been inactive for more than 2 days
-        Ticket::where('updated_at', '<', now()->subDays(2))->delete();
+        // Clean up tickets based on inactivity and closed settings
+        $inactiveDays = (int) config('pterodactyl.tickets.clear_inactive_days', 2);
+        $closedDays = (int) config('pterodactyl.tickets.clear_closed_days', 1);
+
+        Ticket::whereIn('status', ['open', 'review'])
+            ->where('updated_at', '<', now()->subDays($inactiveDays))
+            ->delete();
+
+        Ticket::where('status', 'closed')
+            ->where('updated_at', '<', now()->subDays($closedDays))
+            ->delete();
     }
 
     /**

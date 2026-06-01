@@ -47,6 +47,8 @@ class SettingsServiceProvider extends ServiceProvider
         'pterodactyl:tickets:enabled',
         'pterodactyl:tickets:limit',
         'pterodactyl:tickets:message_limit',
+        'pterodactyl:tickets:clear_inactive_days',
+        'pterodactyl:tickets:clear_closed_days',
     ];
 
     /**
