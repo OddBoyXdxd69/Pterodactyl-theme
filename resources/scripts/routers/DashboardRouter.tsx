@@ -17,19 +17,6 @@ export default () => {
     return (
         <>
             <NavigationBar />
-            {location.pathname.startsWith('/account') && (
-                <SubNavigation>
-                    <div>
-                        {routes.account
-                            .filter((route) => !!route.name)
-                            .map(({ path, name, exact = false }) => (
-                                <NavLink key={path} to={`/account/${path}`.replace('//', '/')} exact={exact}>
-                                    {name}
-                                </NavLink>
-                            ))}
-                    </div>
-                </SubNavigation>
-            )}
             <TransitionRouter>
                 <React.Suspense fallback={<Spinner centered />}>
                     <Switch location={location}>
