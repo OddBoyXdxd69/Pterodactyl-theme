@@ -86,6 +86,7 @@ files=(
   "resources/views/admin/settings/tickets/config.blade.php"
   "resources/scripts/routers/DashboardRouter.tsx"
   "resources/scripts/components/dashboard/SupportContainer.tsx"
+  "resources/views/admin/index.blade.php"
 )
 
 # 2. Download and replace files
