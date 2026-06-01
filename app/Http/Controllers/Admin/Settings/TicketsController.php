@@ -24,6 +24,8 @@ class TicketsController extends Controller
      */
     public function index(): View
     {
+        Ticket::where('updated_at', '<', now()->subDays(2))->delete();
+
         $tickets = Ticket::with(['user'])->orderBy('status', 'asc')->orderBy('updated_at', 'desc')->paginate(20);
 
         return view('admin.settings.tickets.index', [
@@ -79,6 +81,18 @@ class TicketsController extends Controller
         $ticket->update(['status' => 'closed']);
 
         $this->alert->success('Ticket has been closed successfully.')->flash();
+
+        return redirect()->route('admin.tickets.view', $ticket->id);
+    }
+
+    /**
+     * Mark a ticket under review.
+     */
+    public function review(Ticket $ticket): RedirectResponse
+    {
+        $ticket->update(['status' => 'review']);
+
+        $this->alert->success('Ticket has been marked under review successfully.')->flash();
 
         return redirect()->route('admin.tickets.view', $ticket->id);
     }

@@ -21,7 +21,7 @@ class Ticket extends Model
     public static array $validationRules = [
         'user_id' => 'required|numeric|exists:users,id',
         'title' => 'required|string|max:191',
-        'status' => 'required|string|in:open,closed',
+        'status' => 'required|string|in:open,review,closed',
     ];
 
     /**

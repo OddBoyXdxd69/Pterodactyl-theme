@@ -80,8 +80,10 @@ files=(
   "app/Models/TicketMessage.php"
   "app/Http/Controllers/Api/Client/SupportController.php"
   "app/Http/Controllers/Admin/Settings/TicketsController.php"
+  "app/Http/Controllers/Admin/Settings/TicketsConfigController.php"
   "resources/views/admin/settings/tickets/index.blade.php"
   "resources/views/admin/settings/tickets/view.blade.php"
+  "resources/views/admin/settings/tickets/config.blade.php"
   "resources/scripts/routers/DashboardRouter.tsx"
   "resources/scripts/components/dashboard/SupportContainer.tsx"
 )

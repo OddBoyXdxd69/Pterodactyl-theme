@@ -44,6 +44,9 @@ class SettingsServiceProvider extends ServiceProvider
         'pterodactyl:plugins:nests',
         'pterodactyl:versions:enabled',
         'pterodactyl:versions:nests',
+        'pterodactyl:tickets:enabled',
+        'pterodactyl:tickets:limit',
+        'pterodactyl:tickets:message_limit',
     ];
 
     /**

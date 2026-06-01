@@ -36,6 +36,8 @@
                         <div>
                             @if ($ticket->status === 'open')
                                 <span class="label label-success">Open</span>
+                            @elseif ($ticket->status === 'review')
+                                <span class="label label-warning">Under Review</span>
                             @else
                                 <span class="label label-default">Closed</span>
                             @endif
@@ -49,6 +51,12 @@
                 <div class="box-footer">
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         @if ($ticket->status === 'open')
+                            <form action="{{ route('admin.tickets.review', $ticket->id) }}" method="POST" style="width:100%; margin-bottom:5px;">
+                                {!! csrf_field() !!}
+                                <button type="submit" class="btn btn-info btn-block"><i class="fa fa-search"></i> Review Ticket</button>
+                            </form>
+                        @endif
+                        @if ($ticket->status === 'open' || $ticket->status === 'review')
                             <form action="{{ route('admin.tickets.close', $ticket->id) }}" method="POST" style="width:100%; margin-bottom:5px;">
                                 {!! csrf_field() !!}
                                 <button type="submit" class="btn btn-warning btn-block"><i class="fa fa-lock"></i> Close / End Ticket</button>
@@ -76,10 +84,9 @@
                                 <span class="name">
                                     <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> {{ $msg->created_at->diffForHumans() }}</small>
                                     <strong>
+                                        {{ $msg->user->username }}
                                         @if ($msg->is_admin)
-                                            <span class="label label-danger">Admin Reply</span> {{ $msg->user->username }}
-                                        @else
-                                            <span class="label label-primary">User</span> {{ $msg->user->username }}
+                                            <span class="label label-danger" style="margin-left: 5px;">Admin</span>
                                         @endif
                                     </strong>
                                 </span>
@@ -88,7 +95,7 @@
                         </div>
                     @endforeach
                 </div>
-                @if ($ticket->status === 'open')
+                @if ($ticket->status === 'open' || $ticket->status === 'review')
                     <form action="{{ route('admin.tickets.reply', $ticket->id) }}" method="POST">
                         {!! csrf_field() !!}
                         <div class="box-footer">

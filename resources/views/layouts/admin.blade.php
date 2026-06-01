@@ -111,6 +111,11 @@
                                 <i class="fa fa-ticket"></i> <span>Support Tickets</span>
                             </a>
                         </li>
+                        <li class="{{ Route::currentRouteName() !== 'admin.tickets.config' ?: 'active' }}">
+                            <a href="{{ route('admin.tickets.config') }}">
+                                <i class="fa fa-wrench"></i> <span>Tickets Config</span>
+                            </a>
+                        </li>
                         <li class="header">MANAGEMENT</li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">

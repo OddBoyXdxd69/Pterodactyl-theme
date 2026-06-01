@@ -40,6 +40,11 @@ class AssetComposer
                 'enabled' => (bool) config('pterodactyl.versions.enabled', false),
                 'nests' => array_filter(array_map('intval', explode(',', config('pterodactyl.versions.nests', '')))),
             ],
+            'tickets' => [
+                'enabled' => (bool) config('pterodactyl.tickets.enabled', true),
+                'limit' => (int) config('pterodactyl.tickets.limit', 3),
+                'message_limit' => (int) config('pterodactyl.tickets.message_limit', 10),
+            ],
         ]);
     }
 }

@@ -15,7 +15,8 @@ import {
     faUserShield,
     faClock,
     faInbox,
-    faTimes
+    faTimes,
+    faExclamationTriangle
 } from '@fortawesome/free-solid-svg-icons';
 import Button from '@/components/elements/Button';
 import Input from '@/components/elements/Input';
@@ -40,7 +41,7 @@ interface Ticket {
     id: number;
     user_id: number;
     title: string;
-    status: 'open' | 'closed';
+    status: 'open' | 'review' | 'closed';
     created_at: string;
     updated_at: string;
     messages?: TicketMessage[];
@@ -67,6 +68,12 @@ export default () => {
 
     const chatEndRef = useRef<HTMLDivElement>(null);
 
+    // Load configurations from window
+    const ticketsConfig = (window as any).SiteConfiguration?.tickets;
+    const isTicketsEnabled = !!(ticketsConfig?.enabled ?? true);
+    const maxOpenLimit = ticketsConfig?.limit ?? 3;
+    const maxMessageLimit = ticketsConfig?.message_limit ?? 10;
+
     const loadTickets = () => {
         setLoadingTickets(true);
         http.get('/api/client/tickets')
@@ -79,7 +86,9 @@ export default () => {
     };
 
     useEffect(() => {
-        loadTickets();
+        if (isTicketsEnabled) {
+            loadTickets();
+        }
     }, []);
 
     useEffect(() => {
@@ -108,6 +117,10 @@ export default () => {
         e.preventDefault();
         if (!ticketTitle.trim() || !ticketMessage.trim()) return;
 
+        // Double check open tickets limit locally
+        const openTickets = tickets.filter(t => t.status === 'open' || t.status === 'review');
+        if (openTickets.length >= maxOpenLimit) return;
+
         setIsCreating(true);
         clearFlashes('support');
 
@@ -134,6 +147,11 @@ export default () => {
         e.preventDefault();
         if (!selectedTicket || !replyText.trim()) return;
 
+        // Double check message limits locally
+        const userMessagesCount = selectedTicket.messages?.filter(m => !m.is_admin).length ?? 0;
+        const isMessageLimitReached = selectedTicket.status === 'open' && userMessagesCount >= maxMessageLimit;
+        if (isMessageLimitReached) return;
+
         setIsReplying(true);
         clearFlashes('support-chat');
 
@@ -144,7 +162,6 @@ export default () => {
                 const updatedMessages = [...(selectedTicket.messages || []), res.data];
                 setSelectedTicket({ ...selectedTicket, messages: updatedMessages });
                 setReplyText('');
-                // update tickets list to reflect last activity time
                 setTickets(prev => prev.map(t => t.id === selectedTicket.id ? { ...t, updated_at: new Date().toISOString() } : t));
             })
             .catch((err) => {
@@ -173,6 +190,25 @@ export default () => {
             })
             .finally(() => setIsClosing(false));
     };
+
+    // If support system is disabled globally
+    if (!isTicketsEnabled) {
+        return (
+            <PageContentBlock title={'Support Tickets'}>
+                <div css={tw`bg-neutral-900 border border-neutral-800 rounded-lg p-12 text-center text-neutral-400`}>
+                    <FontAwesomeIcon icon={faHeadset} size={'3x'} css={tw`text-neutral-700 mb-3`} />
+                    <p css={tw`text-lg font-semibold text-neutral-200`}>Support Tickets System Offline</p>
+                    <p css={tw`text-sm text-neutral-500 mt-1`}>The support ticket system is currently disabled by administrator.</p>
+                </div>
+            </PageContentBlock>
+        );
+    }
+
+    const openTicketsCount = tickets.filter(t => t.status === 'open' || t.status === 'review').length;
+    const hasReachedOpenLimit = openTicketsCount >= maxOpenLimit;
+
+    const currentMessageCount = selectedTicket?.messages?.filter(m => !m.is_admin).length ?? 0;
+    const isMessageLimitReached = selectedTicket?.status === 'open' && currentMessageCount >= maxMessageLimit;
 
     return (
         <PageContentBlock title={'Support Tickets'} showFlashKey={'support'}>
@@ -217,9 +253,11 @@ export default () => {
                                         <span css={tw`text-[10px] text-neutral-500 font-mono`}>#{t.id}</span>
                                         <span css={[
                                             tw`text-[9px] px-2 py-0.5 rounded font-semibold uppercase`,
-                                            t.status === 'open' ? tw`bg-green-500/10 text-green-400` : tw`bg-neutral-700 text-neutral-400`
+                                            t.status === 'open' ? tw`bg-green-500/10 text-green-400` :
+                                            t.status === 'review' ? tw`bg-yellow-500/10 text-yellow-400` :
+                                            tw`bg-neutral-700 text-neutral-400`
                                         ]}>
-                                            {t.status}
+                                            {t.status === 'review' ? 'under review' : t.status}
                                         </span>
                                     </div>
                                     <div css={tw`font-semibold text-sm text-gray-200 truncate w-full`}>
@@ -263,11 +301,13 @@ export default () => {
                                 <div css={tw`flex items-center gap-2 flex-shrink-0`}>
                                     <span css={[
                                         tw`text-xs px-2.5 py-0.5 rounded font-semibold uppercase`,
-                                        selectedTicket.status === 'open' ? tw`bg-green-500/10 text-green-400` : tw`bg-neutral-700 text-neutral-400`
+                                        selectedTicket.status === 'open' ? tw`bg-green-500/10 text-green-400` :
+                                        selectedTicket.status === 'review' ? tw`bg-yellow-500/10 text-yellow-400` :
+                                        tw`bg-neutral-700 text-neutral-400`
                                     ]}>
-                                        {selectedTicket.status}
+                                        {selectedTicket.status === 'review' ? 'under review' : selectedTicket.status}
                                     </span>
-                                    {selectedTicket.status === 'open' && (
+                                    {(selectedTicket.status === 'open' || selectedTicket.status === 'review') && (
                                         <Button
                                             size={'xsmall'}
                                             color={'red'}
@@ -306,7 +346,7 @@ export default () => {
                                                         css={m.is_admin ? tw`text-purple-400` : tw`text-blue-400`}
                                                     />
                                                     <span css={m.is_admin ? tw`text-purple-300` : tw`text-blue-300`}>
-                                                        {m.is_admin ? 'Staff Reply' : m.user?.username || 'You'}
+                                                        {m.is_admin ? `${m.user?.username || 'Staff'} (Admin)` : m.user?.username || 'You'}
                                                     </span>
                                                 </span>
                                                 <span css={tw`text-[9px] text-neutral-500 font-mono`}>
@@ -324,34 +364,48 @@ export default () => {
 
                             {/* Reply Input Bar */}
                             <div css={tw`pt-3 border-t border-neutral-800 flex-shrink-0`}>
-                                {selectedTicket.status === 'open' ? (
-                                    <form onSubmit={handleSendReply} css={tw`flex gap-2`}>
-                                        <Input
-                                            placeholder={'Type your message here...'}
-                                            value={replyText}
-                                            onChange={(e) => setReplyText(e.target.value)}
-                                            disabled={isReplying}
-                                            css={tw`flex-1`}
-                                        />
-                                        <Button
-                                            type={'submit'}
-                                            disabled={isReplying || !replyText.trim()}
-                                            css={tw`flex justify-center items-center px-5`}
-                                        >
-                                            {isReplying ? (
-                                                <Spinner size={'small'} />
-                                            ) : (
-                                                <>
-                                                    <FontAwesomeIcon icon={faPaperPlane} css={tw`mr-2`} />
-                                                    <span>Reply</span>
-                                                </>
-                                            )}
-                                        </Button>
-                                    </form>
-                                ) : (
+                                {selectedTicket.status === 'closed' ? (
                                     <div css={tw`bg-neutral-800/40 border border-neutral-800 p-3 rounded text-center text-xs text-neutral-400 flex items-center justify-center gap-2`}>
                                         <FontAwesomeIcon icon={faInfoCircle} />
                                         <span>This ticket has been marked as resolved and closed. Open a new ticket if you need further help.</span>
+                                    </div>
+                                ) : isMessageLimitReached ? (
+                                    <div css={tw`bg-yellow-500/10 border-l-4 border-yellow-500 p-3 rounded text-center text-xs text-yellow-200 flex items-center justify-center gap-2`}>
+                                        <FontAwesomeIcon icon={faExclamationTriangle} />
+                                        <span>Message limit reached ({currentMessageCount}/{maxMessageLimit}) for this ticket. Please wait for an administrator to review it.</span>
+                                    </div>
+                                ) : (
+                                    <div css={tw`flex flex-col gap-2`}>
+                                        <form onSubmit={handleSendReply} css={tw`flex gap-2`}>
+                                            <Input
+                                                placeholder={'Type your message here...'}
+                                                value={replyText}
+                                                onChange={(e) => setReplyText(e.target.value)}
+                                                disabled={isReplying}
+                                                css={tw`flex-1`}
+                                            />
+                                            <Button
+                                                type={'submit'}
+                                                disabled={isReplying || !replyText.trim()}
+                                                css={tw`flex justify-center items-center px-5`}
+                                            >
+                                                {isReplying ? (
+                                                    <Spinner size={'small'} />
+                                                ) : (
+                                                    <>
+                                                        <FontAwesomeIcon icon={faPaperPlane} css={tw`mr-2`} />
+                                                        <span>Reply</span>
+                                                    </>
+                                                )}
+                                            </Button>
+                                        </form>
+                                        <div css={tw`text-[10px] text-neutral-400 flex justify-between px-1`}>
+                                            {selectedTicket.status === 'review' ? (
+                                                <span css={tw`text-yellow-400 font-semibold`}>Ticket under staff review (Infinite Chat active)</span>
+                                            ) : (
+                                                <span>Ticket Messages: {currentMessageCount} / {maxMessageLimit}</span>
+                                            )}
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -375,53 +429,70 @@ export default () => {
                             </button>
                         </div>
 
-                        {/* Form */}
-                        <form onSubmit={handleCreateTicket} css={tw`flex flex-col gap-4`}>
-                            <div css={tw`flex flex-col gap-2`}>
-                                <label css={tw`text-xs font-bold text-neutral-400 uppercase`}>Subject Title</label>
-                                <Input
-                                    type="text"
-                                    value={ticketTitle}
-                                    onChange={(e) => setTicketTitle(e.target.value)}
-                                    placeholder="Brief summary of your issue (e.g. MySQL connection error)"
-                                    required
-                                    disabled={isCreating}
-                                />
+                        {/* Form / Limit Check */}
+                        {hasReachedOpenLimit ? (
+                            <div css={tw`flex flex-col gap-4 text-center py-6`}>
+                                <div css={tw`text-yellow-500 text-4xl mb-2`}>
+                                    <FontAwesomeIcon icon={faExclamationTriangle} />
+                                </div>
+                                <h4 css={tw`text-gray-200 font-bold`}>Open Ticket Limit Reached</h4>
+                                <p css={tw`text-sm text-neutral-400 max-w-sm mx-auto`}>
+                                    You currently have {openTicketsCount} open support tickets, which is the maximum limit allowed ({maxOpenLimit}). Please close an active ticket before opening a new one.
+                                </p>
+                                <div css={tw`pt-4 border-t border-neutral-800 flex justify-end`}>
+                                    <Button color={'grey'} onClick={() => setShowCreateModal(false)}>
+                                        Close Window
+                                    </Button>
+                                </div>
                             </div>
+                        ) : (
+                            <form onSubmit={handleCreateTicket} css={tw`flex flex-col gap-4`}>
+                                <div css={tw`flex flex-col gap-2`}>
+                                    <label css={tw`text-xs font-bold text-neutral-400 uppercase`}>Subject Title</label>
+                                    <Input
+                                        type="text"
+                                        value={ticketTitle}
+                                        onChange={(e) => setTicketTitle(e.target.value)}
+                                        placeholder="Brief summary of your issue (e.g. MySQL connection error)"
+                                        required
+                                        disabled={isCreating}
+                                    />
+                                </div>
 
-                            <div css={tw`flex flex-col gap-2`}>
-                                <label css={tw`text-xs font-bold text-neutral-400 uppercase`}>Details of request</label>
-                                <textarea
-                                    value={ticketMessage}
-                                    onChange={(e) => setTicketMessage(e.target.value)}
-                                    placeholder="Please describe your issue in detail. What happened? How can we reproduce it?..."
-                                    required
-                                    disabled={isCreating}
-                                    rows={5}
-                                    css={tw`w-full bg-neutral-800 border border-neutral-800 rounded p-3 text-sm text-gray-200 focus:outline-none focus:border-purple-600 transition-colors resize-none`}
-                                />
-                            </div>
+                                <div css={tw`flex flex-col gap-2`}>
+                                    <label css={tw`text-xs font-bold text-neutral-400 uppercase`}>Details of request</label>
+                                    <textarea
+                                        value={ticketMessage}
+                                        onChange={(e) => setTicketMessage(e.target.value)}
+                                        placeholder="Please describe your issue in detail. What happened? How can we reproduce it?..."
+                                        required
+                                        disabled={isCreating}
+                                        rows={5}
+                                        css={tw`w-full bg-neutral-800 border border-neutral-800 rounded p-3 text-sm text-gray-200 focus:outline-none focus:border-purple-600 transition-colors resize-none`}
+                                    />
+                                </div>
 
-                            {/* Footer Controls */}
-                            <div css={tw`flex justify-end gap-3 pt-3 border-t border-neutral-800`}>
-                                <Button color={'grey'} type="button" onClick={() => setShowCreateModal(false)} disabled={isCreating}>
-                                    Cancel
-                                </Button>
-                                <Button type="submit" disabled={isCreating || !ticketTitle.trim() || !ticketMessage.trim()} css={tw`flex items-center space-x-2`}>
-                                    {isCreating ? (
-                                        <>
-                                            <Spinner size={'small'} />
-                                            <span>Opening Ticket...</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <FontAwesomeIcon icon={faPaperPlane} />
-                                            <span>Submit Ticket</span>
-                                        </>
-                                    )}
-                                </Button>
-                            </div>
-                        </form>
+                                {/* Footer Controls */}
+                                <div css={tw`flex justify-end gap-3 pt-3 border-t border-neutral-800`}>
+                                    <Button color={'grey'} type="button" onClick={() => setShowCreateModal(false)} disabled={isCreating}>
+                                        Cancel
+                                    </Button>
+                                    <Button type="submit" disabled={isCreating || !ticketTitle.trim() || !ticketMessage.trim()} css={tw`flex items-center space-x-2`}>
+                                        {isCreating ? (
+                                            <>
+                                                <Spinner size={'small'} />
+                                                <span>Opening Ticket...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <FontAwesomeIcon icon={faPaperPlane} />
+                                                <span>Submit Ticket</span>
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
+                            </form>
+                        )}
                     </div>
                 </div>
             )}

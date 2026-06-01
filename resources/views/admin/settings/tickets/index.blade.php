@@ -41,6 +41,8 @@
                                     <td>
                                         @if ($ticket->status === 'open')
                                             <span class="label label-success">Open</span>
+                                        @elseif ($ticket->status === 'review')
+                                            <span class="label label-warning">Under Review</span>
                                         @else
                                             <span class="label label-default">Closed</span>
                                         @endif
