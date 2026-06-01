@@ -83,4 +83,69 @@ export default createGlobalStyle`
         --text-muted: #9ca3af;
         --border-color: #1b1c26;
     }
+
+    /* --- Premium Textured & Glassmorphic Custom Styling --- */
+    
+    body {
+        background-color: #07080e !important;
+        /* Technical grid texture overlay combined with glowing radial lights */
+        background-image: 
+            radial-gradient(circle at 50% 10%, rgba(139, 92, 246, 0.06) 0%, transparent 60%),
+            radial-gradient(circle at 10% 80%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
+            linear-gradient(rgba(255, 255, 255, 0.007) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.007) 1px, transparent 1px) !important;
+        background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px !important;
+        background-attachment: fixed !important;
+    }
+
+    /* Glossy 3D Reflection & Glowing Border for all Buttons */
+    button, .btn, a[class*="Button"] {
+        position: relative;
+        overflow: hidden;
+        background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.25) 100%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        border-radius: 8px !important;
+    }
+
+    button:hover, .btn:hover, a[class*="Button"]:hover {
+        box-shadow: 0 4px 20px rgba(139, 92, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+        transform: translateY(-1px);
+        filter: brightness(1.15);
+    }
+    
+    button:active, .btn:active, a[class*="Button"]:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    /* Frosted Glass Texture for Cards, Boxes, and Rows */
+    div[class*="GreyRowBox"], 
+    div[class*="ContentBox"], 
+    div[class*="SupportContainer"] > div, 
+    div[class*="LoginFormContainer"] > form > div {
+        background-color: rgba(13, 14, 22, 0.8) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.03) !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45) !important;
+        background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.015) 0%, rgba(255, 255, 255, 0) 100%) !important;
+        border-radius: 12px !important;
+    }
+
+    /* Sleek Glow & Transparent Look for Inputs */
+    input, select, textarea {
+        background-color: rgba(13, 14, 22, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 8px !important;
+        transition: all 0.2s ease !important;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        border-color: rgba(139, 92, 246, 0.5) !important;
+        box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15) !important;
+        background-color: rgba(13, 14, 22, 0.85) !important;
+    }
 `;
+
