@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Link, NavLink, useRouteMatch } from 'react-router-dom';
+import { Link, NavLink, useRouteMatch, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCogs,
@@ -141,6 +141,7 @@ const ServerSidebarLinksInner = ({ match, rootAdmin, setSidebarOpen }: { match: 
 };
 
 export default () => {
+    const location = useLocation();
     const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
     const rootAdmin = useStoreState((state: ApplicationStore) => state.user.data!.rootAdmin);
     const discordUrl = useStoreState((state: ApplicationStore) => state.settings.data!.theme?.discord_url);
@@ -257,6 +258,27 @@ export default () => {
                         <FontAwesomeIcon icon={faUser} css={tw`w-5 mr-4 text-center`} />
                         <span>Account Settings</span>
                     </SidebarLink>
+
+                    {location.pathname.startsWith('/account') && (
+                        <div css={tw`pl-6 py-1 space-y-1`}>
+                            {routes.account
+                                .filter((route) => !!route.name)
+                                .map((route) => {
+                                    const path = `/account/${route.path}`.replace('//', '/').replace(/\/$/, '') || '/account';
+                                    return (
+                                        <SidebarLink
+                                            key={route.path}
+                                            to={path}
+                                            exact={route.exact}
+                                            onClick={() => setSidebarOpen(false)}
+                                            css={tw`text-xs py-1.5 px-3`}
+                                        >
+                                            <span>{route.name}</span>
+                                        </SidebarLink>
+                                    );
+                                })}
+                        </div>
+                    )}
 
                     <ServerSidebarLinks setSidebarOpen={setSidebarOpen} />
 
