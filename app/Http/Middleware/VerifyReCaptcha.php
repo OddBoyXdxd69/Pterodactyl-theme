@@ -41,7 +41,13 @@ class VerifyReCaptcha
             ?? $request->input('h-captcha-response');
 
         if ($token) {
-            $client = new Client();
+            $client = new Client([
+                'curl' => [
+                    CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                ],
+                'connect_timeout' => 3.0,
+                'timeout' => 5.0,
+            ]);
             $res = $client->post($verifyUrl, [
                 'form_params' => [
                     'secret' => $this->config->get('recaptcha.secret_key'),
