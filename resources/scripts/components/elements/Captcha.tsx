@@ -51,7 +51,7 @@ const Captcha = React.forwardRef<CaptchaRef, Props>(({ onVerify, onExpire }, ref
                         sitekey: siteKey,
                         callback: onVerify,
                         'expired-callback': onExpire,
-                        size: 'invisible',
+                        appearance: 'execute',
                     });
                 }
             } else if (provider === 'hcaptcha' && (window as any).hcaptcha) {
@@ -87,7 +87,7 @@ const Captcha = React.forwardRef<CaptchaRef, Props>(({ onVerify, onExpire }, ref
         execute: () => {
             if (!enabled) return;
             if (provider === 'turnstile' && (window as any).turnstile && widgetIdRef.current !== null) {
-                (window as any).turnstile.execute(containerRef.current, widgetIdRef.current);
+                (window as any).turnstile.execute(widgetIdRef.current);
             } else if (provider === 'hcaptcha' && (window as any).hcaptcha && widgetIdRef.current !== null) {
                 (window as any).hcaptcha.execute(widgetIdRef.current);
             } else if (provider === 'recaptcha' && (window as any).grecaptcha && widgetIdRef.current !== null) {
@@ -111,7 +111,7 @@ const Captcha = React.forwardRef<CaptchaRef, Props>(({ onVerify, onExpire }, ref
     return (
         <div 
             ref={containerRef} 
-            style={{ display: 'none', width: 0, height: 0, overflow: 'hidden' }}
+            style={{ width: 0, height: 0, overflow: 'hidden', position: 'absolute' }}
         />
     );
 });
