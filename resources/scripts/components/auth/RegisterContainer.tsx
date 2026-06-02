@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import register, { verifyOtp } from '@/api/auth/register';
 import LoginFormContainer from '@/components/auth/LoginFormContainer';
@@ -6,8 +6,6 @@ import { useStoreState } from 'easy-peasy';
 import { Formik, FormikHelpers } from 'formik';
 import { object, string, ref as yupRef } from 'yup';
 import Field from '@/components/elements/Field';
-import Input from '@/components/elements/Input';
-import Label from '@/components/elements/Label';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
 import Reaptcha from 'reaptcha';
@@ -20,6 +18,7 @@ interface Values {
     name_last: string;
     password: string;
     password_confirmation: string;
+    otp: string;
 }
 
 const RegisterContainer = ({ history }: RouteComponentProps) => {
@@ -27,7 +26,6 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
     const [token, setToken] = useState('');
     const [otpSent, setOtpSent] = useState(false);
     const [emailForOtp, setEmailForOtp] = useState('');
-    const [otpCode, setOtpCode] = useState('');
     const [isOtpSubmitting, setIsOtpSubmitting] = useState(false);
 
     const { clearFlashes, clearAndAddHttpError, addFlash } = useFlash();
@@ -45,35 +43,56 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
         }
     }, [registrationEnabled]);
 
-    // Handle background submission for OTP after Recaptcha token is generated
-    useEffect(() => {
-        if (!token || !otpSent) return;
-
-        setIsOtpSubmitting(true);
-        verifyOtp(emailForOtp, otpCode, token)
-            .then((response) => {
-                if (response.success) {
-                    addFlash({
-                        type: 'success',
-                        message: 'Email verified successfully! Logging you in...',
-                        key: 'login',
-                    });
-                    // @ts-expect-error this is valid
-                    window.location = response.intended || '/';
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                setToken('');
-                if (ref.current) ref.current.reset();
-                setIsOtpSubmitting(false);
-                clearAndAddHttpError({ error });
-            });
-    }, [token]);
-
-    const onSubmit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
+    const onSubmit = (values: Values, { setSubmitting, setFieldValue }: FormikHelpers<Values>) => {
         clearFlashes();
 
+        if (otpSent) {
+            if (values.otp.length !== 6) {
+                addFlash({
+                    type: 'error',
+                    message: 'Please enter a valid 6-digit code.',
+                    key: 'login',
+                });
+                setSubmitting(false);
+                return;
+            }
+
+            setIsOtpSubmitting(true);
+
+            if (recaptchaEnabled && !token) {
+                ref.current!.execute().catch((error) => {
+                    console.error(error);
+                    setIsOtpSubmitting(false);
+                    setSubmitting(false);
+                    clearAndAddHttpError({ error });
+                });
+                return;
+            }
+
+            verifyOtp(emailForOtp, values.otp, token)
+                .then((response) => {
+                    if (response.success) {
+                        addFlash({
+                            type: 'success',
+                            message: 'Email verified successfully! Logging you in...',
+                            key: 'login',
+                        });
+                        // @ts-expect-error this is valid
+                        window.location = response.intended || '/';
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
+                    setToken('');
+                    if (ref.current) ref.current.reset();
+                    setIsOtpSubmitting(false);
+                    setSubmitting(false);
+                    clearAndAddHttpError({ error });
+                });
+            return;
+        }
+
+        // Normal Registration Flow
         if (recaptchaEnabled && !token) {
             ref.current!.execute().catch((error) => {
                 console.error(error);
@@ -115,113 +134,8 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
             });
     };
 
-    const onOtpSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (otpCode.length !== 6) {
-            clearFlashes();
-            addFlash({
-                type: 'error',
-                message: 'Please enter a valid 6-digit code.',
-                key: 'login',
-            });
-            return;
-        }
-
-        clearFlashes();
-        setIsOtpSubmitting(true);
-
-        if (recaptchaEnabled && !token) {
-            ref.current!.execute().catch((error) => {
-                console.error(error);
-                setIsOtpSubmitting(false);
-                clearAndAddHttpError({ error });
-            });
-            return;
-        }
-
-        verifyOtp(emailForOtp, otpCode, token)
-            .then((response) => {
-                if (response.success) {
-                    addFlash({
-                        type: 'success',
-                        message: 'Email verified successfully! Logging you in...',
-                        key: 'login',
-                    });
-                    // @ts-expect-error this is valid
-                    window.location = response.intended || '/';
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-                setToken('');
-                if (ref.current) ref.current.reset();
-                setIsOtpSubmitting(false);
-                clearAndAddHttpError({ error });
-            });
-    };
-
     if (!registrationEnabled) {
         return null;
-    }
-
-    if (otpSent) {
-        return (
-            <LoginFormContainer title={'Verify Your Email'} css={tw`w-full flex`}>
-                <form onSubmit={onOtpSubmit}>
-                    <p css={tw`text-sm text-neutral-400 mb-6 text-center md:-mt-2`}>
-                        A 6-digit verification code has been sent to <strong css={tw`text-purple-400`}>{emailForOtp}</strong>. Enter it below to complete your registration.
-                    </p>
-                    <div css={tw`mt-4`}>
-                        <Label>Verification Code</Label>
-                        <Input
-                            type={'text'}
-                            maxLength={6}
-                            disabled={isOtpSubmitting}
-                            value={otpCode}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOtpCode(e.target.value)}
-                        />
-                    </div>
-                    <div css={tw`mt-6`}>
-                        <Button
-                            type={'submit'}
-                            size={'xlarge'}
-                            isLoading={isOtpSubmitting}
-                            disabled={isOtpSubmitting}
-                            css={tw`w-full bg-purple-600 hover:bg-purple-700 border-purple-700 hover:border-purple-800 text-white font-bold tracking-wide rounded-xl shadow-lg transition-all transform active:scale-95`}
-                        >
-                            Verify & Create Account
-                        </Button>
-                    </div>
-                    <div css={tw`mt-6 text-center text-xs text-neutral-500`}>
-                        <button
-                            type={'button'}
-                            onClick={() => {
-                                setOtpSent(false);
-                                setOtpCode('');
-                                clearFlashes();
-                            }}
-                            css={tw`text-purple-400 hover:text-purple-300 font-semibold no-underline transition-colors bg-transparent border-0 cursor-pointer p-0`}
-                        >
-                            Back to Register
-                        </button>
-                    </div>
-                    {recaptchaEnabled && (
-                        <Reaptcha
-                            ref={ref}
-                            size={'invisible'}
-                            sitekey={siteKey || '_invalid_key'}
-                            onVerify={(response) => {
-                                setToken(response);
-                            }}
-                            onExpire={() => {
-                                setIsOtpSubmitting(false);
-                                setToken('');
-                            }}
-                        />
-                    )}
-                </form>
-            </LoginFormContainer>
-        );
     }
 
     return (
@@ -234,8 +148,11 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
                 name_last: '',
                 password: '',
                 password_confirmation: '',
+                otp: '',
             }}
-            validationSchema={object().shape({
+            validationSchema={otpSent ? object().shape({
+                otp: string().required('Verification code is required.').length(6, 'Verification code must be 6 digits.'),
+            }) : object().shape({
                 email: string().email('A valid email address must be provided.').required('An email address is required.'),
                 username: string().required('A username is required.').min(3, 'Username must be at least 3 characters.').max(30, 'Username cannot exceed 30 characters.'),
                 name_first: string().required('First name is required.').max(50, 'First name cannot exceed 50 characters.'),
@@ -246,34 +163,86 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
                     .oneOf([yupRef('password')], 'Passwords must match.'),
             })}
         >
-            {({ isSubmitting, setSubmitting, submitForm }) => (
-                <LoginFormContainer title={'Create an Account'} css={tw`w-full flex`}>
-                    <p css={tw`text-sm text-neutral-400 mb-6 text-center md:-mt-2`}>
-                        Enter your details below to register your account.
-                    </p>
-                    <div css={tw`grid grid-cols-1 sm:grid-cols-2 gap-x-4`}>
-                        <Field type={'text'} label={'First Name'} name={'name_first'} disabled={isSubmitting} />
-                        <Field type={'text'} label={'Last Name'} name={'name_last'} disabled={isSubmitting} />
-                    </div>
-                    <div css={tw`grid grid-cols-1 sm:grid-cols-2 gap-x-4 mt-4`}>
-                        <Field type={'text'} label={'Username'} name={'username'} disabled={isSubmitting} />
-                        <Field type={'email'} label={'Email Address'} name={'email'} disabled={isSubmitting} />
-                    </div>
-                    <div css={tw`grid grid-cols-1 sm:grid-cols-2 gap-x-4 mt-4`}>
-                        <Field type={'password'} label={'Password'} name={'password'} disabled={isSubmitting} />
-                        <Field type={'password'} label={'Confirm Password'} name={'password_confirmation'} disabled={isSubmitting} />
-                    </div>
-                    <div css={tw`mt-6`}>
-                        <Button
-                            type={'submit'}
-                            size={'xlarge'}
-                            isLoading={isSubmitting}
-                            disabled={isSubmitting}
-                            css={tw`w-full bg-purple-600 hover:bg-purple-700 border-purple-700 hover:border-purple-800 text-white font-bold tracking-wide rounded-xl shadow-lg transition-all transform active:scale-95`}
-                        >
-                            Register
-                        </Button>
-                    </div>
+            {({ isSubmitting, submitForm, setFieldValue }) => (
+                <LoginFormContainer title={otpSent ? 'Verify Your Email' : 'Create an Account'} css={tw`w-full flex`}>
+                    {otpSent ? (
+                        <>
+                            <p css={tw`text-sm text-neutral-400 mb-6 text-center md:-mt-2`}>
+                                A 6-digit verification code has been sent to <strong css={tw`text-purple-400`}>{emailForOtp}</strong>. Enter it below to complete your registration.
+                            </p>
+                            <div css={tw`mt-4`}>
+                                <Field
+                                    type={'text'}
+                                    label={'Verification Code'}
+                                    name={'otp'}
+                                    maxLength={6}
+                                    disabled={isOtpSubmitting}
+                                />
+                            </div>
+                            <div css={tw`mt-6`}>
+                                <Button
+                                    type={'submit'}
+                                    size={'xlarge'}
+                                    isLoading={isOtpSubmitting}
+                                    disabled={isOtpSubmitting}
+                                    css={tw`w-full bg-purple-600 hover:bg-purple-700 border-purple-700 hover:border-purple-800 text-white font-bold tracking-wide rounded-xl shadow-lg transition-all transform active:scale-95`}
+                                >
+                                    Verify & Create Account
+                                </Button>
+                            </div>
+                            <div css={tw`mt-6 text-center text-xs text-neutral-500`}>
+                                <button
+                                    type={'button'}
+                                    onClick={() => {
+                                        setOtpSent(false);
+                                        setFieldValue('otp', '');
+                                        clearFlashes();
+                                    }}
+                                    css={tw`text-purple-400 hover:text-purple-300 font-semibold no-underline transition-colors bg-transparent border-0 cursor-pointer p-0`}
+                                >
+                                    Back to Register
+                                </button>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <p css={tw`text-sm text-neutral-400 mb-6 text-center md:-mt-2`}>
+                                Enter your details below to register your account.
+                            </p>
+                            <div css={tw`grid grid-cols-1 sm:grid-cols-2 gap-x-4`}>
+                                <Field type={'text'} label={'First Name'} name={'name_first'} disabled={isSubmitting} />
+                                <Field type={'text'} label={'Last Name'} name={'name_last'} disabled={isSubmitting} />
+                            </div>
+                            <div css={tw`grid grid-cols-1 sm:grid-cols-2 gap-x-4 mt-4`}>
+                                <Field type={'text'} label={'Username'} name={'username'} disabled={isSubmitting} />
+                                <Field type={'email'} label={'Email Address'} name={'email'} disabled={isSubmitting} />
+                            </div>
+                            <div css={tw`grid grid-cols-1 sm:grid-cols-2 gap-x-4 mt-4`}>
+                                <Field type={'password'} label={'Password'} name={'password'} disabled={isSubmitting} />
+                                <Field type={'password'} label={'Confirm Password'} name={'password_confirmation'} disabled={isSubmitting} />
+                            </div>
+                            <div css={tw`mt-6`}>
+                                <Button
+                                    type={'submit'}
+                                    size={'xlarge'}
+                                    isLoading={isSubmitting}
+                                    disabled={isSubmitting}
+                                    css={tw`w-full bg-purple-600 hover:bg-purple-700 border-purple-700 hover:border-purple-800 text-white font-bold tracking-wide rounded-xl shadow-lg transition-all transform active:scale-95`}
+                                >
+                                    Register
+                                </Button>
+                            </div>
+                            <div css={tw`mt-6 text-center text-xs text-neutral-500`}>
+                                Already have an account?{' '}
+                                <Link
+                                    to={'/auth/login'}
+                                    css={tw`text-purple-400 hover:text-purple-300 font-semibold no-underline transition-colors`}
+                                >
+                                    Login
+                                </Link>
+                            </div>
+                        </>
+                    )}
                     {recaptchaEnabled && (
                         <Reaptcha
                             ref={ref}
@@ -281,25 +250,13 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
                             sitekey={siteKey || '_invalid_key'}
                             onVerify={(response) => {
                                 setToken(response);
-                                if (!otpSent) {
-                                    submitForm();
-                                }
+                                submitForm();
                             }}
                             onExpire={() => {
-                                setSubmitting(false);
                                 setToken('');
                             }}
                         />
                     )}
-                    <div css={tw`mt-6 text-center text-xs text-neutral-500`}>
-                        Already have an account?{' '}
-                        <Link
-                            to={'/auth/login'}
-                            css={tw`text-purple-400 hover:text-purple-300 font-semibold no-underline transition-colors`}
-                        >
-                            Login
-                        </Link>
-                    </div>
                 </LoginFormContainer>
             )}
         </Formik>
