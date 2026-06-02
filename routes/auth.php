@@ -30,6 +30,7 @@ Route::middleware(['throttle:authentication'])->group(function () {
 
     // Registration endpoint.
     Route::post('/register', [Auth\RegisterController::class, 'register'])->middleware('recaptcha');
+    Route::post('/register/otp', [Auth\RegisterController::class, 'verifyOtp'])->middleware('recaptcha');
 
     // Forgot password route. A post to this endpoint will trigger an
     // email to be sent containing a reset token.

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import register from '@/api/auth/register';
+import register, { verifyOtp } from '@/api/auth/register';
 import LoginFormContainer from '@/components/auth/LoginFormContainer';
 import { useStoreState } from 'easy-peasy';
 import { Formik, FormikHelpers } from 'formik';
@@ -23,6 +23,10 @@ interface Values {
 const RegisterContainer = ({ history }: RouteComponentProps) => {
     const ref = useRef<Reaptcha>(null);
     const [token, setToken] = useState('');
+    const [otpSent, setOtpSent] = useState(false);
+    const [emailForOtp, setEmailForOtp] = useState('');
+    const [otpCode, setOtpCode] = useState('');
+    const [isOtpSubmitting, setIsOtpSubmitting] = useState(false);
 
     const { clearFlashes, clearAndAddHttpError, addFlash } = useFlash();
     const { enabled: recaptchaEnabled, siteKey } = useStoreState((state) => state.settings.data!.recaptcha);
@@ -39,6 +43,32 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
         }
     }, [registrationEnabled]);
 
+    // Handle background submission for OTP after Recaptcha token is generated
+    useEffect(() => {
+        if (!token || !otpSent) return;
+
+        setIsOtpSubmitting(true);
+        verifyOtp(emailForOtp, otpCode, token)
+            .then((response) => {
+                if (response.success) {
+                    addFlash({
+                        type: 'success',
+                        message: 'Email verified successfully! Logging you in...',
+                        key: 'login',
+                    });
+                    // @ts-expect-error this is valid
+                    window.location = response.intended || '/';
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                setToken('');
+                if (ref.current) ref.current.reset();
+                setIsOtpSubmitting(false);
+                clearAndAddHttpError({ error });
+            });
+    }, [token]);
+
     const onSubmit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
         clearFlashes();
 
@@ -53,7 +83,18 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
 
         register({ ...values, recaptchaData: token })
             .then((response) => {
-                if (response.success) {
+                if (response.otp_required) {
+                    setOtpSent(true);
+                    setEmailForOtp(response.email);
+                    setToken('');
+                    if (ref.current) ref.current.reset();
+                    setSubmitting(false);
+                    addFlash({
+                        type: 'info',
+                        message: 'A 6-digit verification code has been sent to your email. Please enter it below to complete your registration.',
+                        key: 'login',
+                    });
+                } else if (response.success) {
                     addFlash({
                         type: 'success',
                         message: 'Account created successfully! Logging you in...',
@@ -72,8 +113,114 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
             });
     };
 
+    const onOtpSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (otpCode.length !== 6) {
+            clearFlashes();
+            addFlash({
+                type: 'error',
+                message: 'Please enter a valid 6-digit code.',
+                key: 'login',
+            });
+            return;
+        }
+
+        clearFlashes();
+        setIsOtpSubmitting(true);
+
+        if (recaptchaEnabled && !token) {
+            ref.current!.execute().catch((error) => {
+                console.error(error);
+                setIsOtpSubmitting(false);
+                clearAndAddHttpError({ error });
+            });
+            return;
+        }
+
+        verifyOtp(emailForOtp, otpCode, token)
+            .then((response) => {
+                if (response.success) {
+                    addFlash({
+                        type: 'success',
+                        message: 'Email verified successfully! Logging you in...',
+                        key: 'login',
+                    });
+                    // @ts-expect-error this is valid
+                    window.location = response.intended || '/';
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                setToken('');
+                if (ref.current) ref.current.reset();
+                setIsOtpSubmitting(false);
+                clearAndAddHttpError({ error });
+            });
+    };
+
     if (!registrationEnabled) {
         return null;
+    }
+
+    if (otpSent) {
+        return (
+            <LoginFormContainer title={'Verify Your Email'} css={tw`w-full flex`}>
+                <form onSubmit={onOtpSubmit}>
+                    <p css={tw`text-sm text-neutral-400 mb-6 text-center md:-mt-2`}>
+                        A 6-digit verification code has been sent to <strong css={tw`text-purple-400`}>{emailForOtp}</strong>. Enter it below to complete your registration.
+                    </p>
+                    <div css={tw`mt-4`}>
+                        <Field
+                            type={'text'}
+                            label={'Verification Code'}
+                            name={'otp'}
+                            maxLength={6}
+                            disabled={isOtpSubmitting}
+                            value={otpCode}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOtpCode(e.target.value)}
+                        />
+                    </div>
+                    <div css={tw`mt-6`}>
+                        <Button
+                            type={'submit'}
+                            size={'xlarge'}
+                            isLoading={isOtpSubmitting}
+                            disabled={isOtpSubmitting}
+                            css={tw`w-full bg-purple-600 hover:bg-purple-700 border-purple-700 hover:border-purple-800 text-white font-bold tracking-wide rounded-xl shadow-lg transition-all transform active:scale-95`}
+                        >
+                            Verify & Create Account
+                        </Button>
+                    </div>
+                    <div css={tw`mt-6 text-center text-xs text-neutral-500`}>
+                        <button
+                            type={'button'}
+                            onClick={() => {
+                                setOtpSent(false);
+                                setOtpCode('');
+                                clearFlashes();
+                            }}
+                            css={tw`text-purple-400 hover:text-purple-300 font-semibold no-underline transition-colors bg-transparent border-0 cursor-pointer p-0`}
+                        >
+                            Back to Register
+                        </button>
+                    </div>
+                    {recaptchaEnabled && (
+                        <Reaptcha
+                            ref={ref}
+                            size={'invisible'}
+                            sitekey={siteKey || '_invalid_key'}
+                            onVerify={(response) => {
+                                setToken(response);
+                            }}
+                            onExpire={() => {
+                                setIsOtpSubmitting(false);
+                                setToken('');
+                            }}
+                        />
+                    )}
+                </form>
+            </LoginFormContainer>
+        );
     }
 
     return (
@@ -133,7 +280,9 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
                             sitekey={siteKey || '_invalid_key'}
                             onVerify={(response) => {
                                 setToken(response);
-                                submitForm();
+                                if (!otpSent) {
+                                    submitForm();
+                                }
                             }}
                             onExpire={() => {
                                 setSubmitting(false);
@@ -141,15 +290,6 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
                             }}
                         />
                     )}
-                    <div css={tw`mt-6 text-center text-xs text-neutral-500`}>
-                        Already have an account?{' '}
-                        <Link
-                            to={'/auth/login'}
-                            css={tw`text-purple-400 hover:text-purple-300 font-semibold no-underline transition-colors`}
-                        >
-                            Login
-                        </Link>
-                    </div>
                 </LoginFormContainer>
             )}
         </Formik>

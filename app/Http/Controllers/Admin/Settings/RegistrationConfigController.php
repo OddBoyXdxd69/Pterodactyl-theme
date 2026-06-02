@@ -37,9 +37,11 @@ class RegistrationConfigController extends Controller
     {
         $request->validate([
             'pterodactyl:registration:enabled' => 'required|in:0,1',
+            'pterodactyl:registration:otp' => 'nullable|in:0,1',
         ]);
 
         $this->settings->set('settings::pterodactyl:registration:enabled', $request->input('pterodactyl:registration:enabled'));
+        $this->settings->set('settings::pterodactyl:registration:otp', $request->input('pterodactyl:registration:otp', '0'));
 
         $this->kernel->call('queue:restart');
         $this->alert->success('User registration configurations have been updated successfully and the queue worker was restarted.')->flash();

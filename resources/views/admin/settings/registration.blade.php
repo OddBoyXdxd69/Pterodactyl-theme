@@ -32,6 +32,25 @@
                                     <p class="text-muted"><small>If enabled, a "Register" option will be visible on the login screen to allow new users to sign up for accounts themselves.</small></p>
                                 </div>
                             </div>
+                            <div class="form-group col-md-12">
+                                <label class="control-label">Require Email OTP Verification</label>
+                                <div>
+                                    @php
+                                        $mailHost = config('mail.mailers.smtp.host');
+                                        $mailSetup = !empty($mailHost) && $mailHost !== 'smtp.example.com' && !empty(config('mail.mailers.smtp.username'));
+                                        $otpEnabled = config('pterodactyl.registration.otp', false);
+                                    @endphp
+                                    <select class="form-control" name="pterodactyl:registration:otp" @if(!$mailSetup) disabled @endif>
+                                        <option value="1" {{ old('pterodactyl:registration:otp', $otpEnabled) && $mailSetup ? 'selected' : '' }}>Enabled (Requires users to verify their email via OTP)</option>
+                                        <option value="0" {{ !old('pterodactyl:registration:otp', $otpEnabled) || !$mailSetup ? 'selected' : '' }}>Disabled</option>
+                                    </select>
+                                    @if(!$mailSetup)
+                                        <p class="text-danger" style="margin-top: 5px;"><small><strong>Note:</strong> Mail settings are not fully configured yet. Please configure your <a href="{{ route('admin.settings.mail') }}">Mail Settings</a> first before enabling OTP verification.</small></p>
+                                    @else
+                                        <p class="text-muted"><small>If enabled, users will receive a professional 6-digit OTP code to verify their email address before their account is created.</small></p>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="box-footer">

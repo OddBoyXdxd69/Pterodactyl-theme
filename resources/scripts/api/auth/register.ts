@@ -10,7 +10,7 @@ export interface RegisterData {
     recaptchaData?: string | null;
 }
 
-export default (data: RegisterData): Promise<{ success: boolean; intended?: string }> => {
+export default (data: RegisterData): Promise<any> => {
     return new Promise((resolve, reject) => {
         http.get('/sanctum/csrf-cookie')
             .then(() =>
@@ -25,10 +25,24 @@ export default (data: RegisterData): Promise<{ success: boolean; intended?: stri
                 })
             )
             .then((response) => {
-                resolve({
-                    success: response.data.success,
-                    intended: response.data.intended,
-                });
+                resolve(response.data);
+            })
+            .catch(reject);
+    });
+};
+
+export const verifyOtp = (email: string, otp: string, recaptchaData?: string | null): Promise<any> => {
+    return new Promise((resolve, reject) => {
+        http.get('/sanctum/csrf-cookie')
+            .then(() =>
+                http.post('/auth/register/otp', {
+                    email: email,
+                    otp: otp,
+                    'g-recaptcha-response': recaptchaData,
+                })
+            )
+            .then((response) => {
+                resolve(response.data);
             })
             .catch(reject);
     });

@@ -50,6 +50,7 @@ class SettingsServiceProvider extends ServiceProvider
         'pterodactyl:tickets:clear_inactive_days',
         'pterodactyl:tickets:clear_closed_days',
         'pterodactyl:registration:enabled',
+        'pterodactyl:registration:otp',
     ];
 
     /**
