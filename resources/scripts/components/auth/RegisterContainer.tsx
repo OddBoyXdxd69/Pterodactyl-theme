@@ -6,6 +6,8 @@ import { useStoreState } from 'easy-peasy';
 import { Formik, FormikHelpers } from 'formik';
 import { object, string, ref as yupRef } from 'yup';
 import Field from '@/components/elements/Field';
+import Input from '@/components/elements/Input';
+import Label from '@/components/elements/Label';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
 import Reaptcha from 'reaptcha';
@@ -170,10 +172,9 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
                         A 6-digit verification code has been sent to <strong css={tw`text-purple-400`}>{emailForOtp}</strong>. Enter it below to complete your registration.
                     </p>
                     <div css={tw`mt-4`}>
-                        <Field
+                        <Label>Verification Code</Label>
+                        <Input
                             type={'text'}
-                            label={'Verification Code'}
-                            name={'otp'}
                             maxLength={6}
                             disabled={isOtpSubmitting}
                             value={otpCode}
