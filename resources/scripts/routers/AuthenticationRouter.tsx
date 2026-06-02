@@ -15,7 +15,7 @@ export default () => {
     const { path } = useRouteMatch();
 
     return (
-        <div css={tw`fixed inset-0 flex flex-col justify-start md:justify-center items-center bg-[#07080f] overflow-y-auto p-4`}>
+        <div css={tw`min-h-screen w-full flex flex-col justify-start md:justify-center items-center bg-[#07080f] py-8 px-4 overflow-x-hidden`} style={{ boxSizing: 'border-box' }}>
             {/* Background radial glow */}
             <div 
                 style={{
@@ -35,7 +35,7 @@ export default () => {
                     pointerEvents: 'none',
                 }}
             />
-            <div css={tw`relative w-full z-10 flex justify-center items-center`}>
+            <div css={tw`relative w-full z-10 flex justify-center items-start`}>
                 <Switch location={location}>
                     <Route path={`${path}/login`} component={LoginContainer} exact />
                     <Route path={`${path}/register`} component={RegisterContainer} exact />

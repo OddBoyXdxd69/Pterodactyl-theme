@@ -103,15 +103,15 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
                     <p css={tw`text-sm text-neutral-400 mb-6 text-center md:-mt-2`}>
                         Enter your details below to register your account.
                     </p>
-                    <div css={tw`grid grid-cols-2 gap-x-4`}>
+                    <div css={tw`grid grid-cols-1 sm:grid-cols-2 gap-x-4`}>
                         <Field type={'text'} label={'First Name'} name={'name_first'} disabled={isSubmitting} />
                         <Field type={'text'} label={'Last Name'} name={'name_last'} disabled={isSubmitting} />
                     </div>
-                    <div css={tw`grid grid-cols-2 gap-x-4 mt-4`}>
+                    <div css={tw`grid grid-cols-1 sm:grid-cols-2 gap-x-4 mt-4`}>
                         <Field type={'text'} label={'Username'} name={'username'} disabled={isSubmitting} />
                         <Field type={'email'} label={'Email Address'} name={'email'} disabled={isSubmitting} />
                     </div>
-                    <div css={tw`grid grid-cols-2 gap-x-4 mt-4`}>
+                    <div css={tw`grid grid-cols-1 sm:grid-cols-2 gap-x-4 mt-4`}>
                         <Field type={'password'} label={'Password'} name={'password'} disabled={isSubmitting} />
                         <Field type={'password'} label={'Confirm Password'} name={'password_confirmation'} disabled={isSubmitting} />
                     </div>
