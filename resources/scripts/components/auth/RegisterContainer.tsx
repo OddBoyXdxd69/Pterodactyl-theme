@@ -8,7 +8,7 @@ import { object, string, ref as yupRef } from 'yup';
 import Field from '@/components/elements/Field';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
-import Reaptcha from 'reaptcha';
+import Captcha, { CaptchaRef } from '@/components/elements/Captcha';
 import useFlash from '@/plugins/useFlash';
 
 interface Values {
@@ -22,7 +22,7 @@ interface Values {
 }
 
 const RegisterContainer = ({ history }: RouteComponentProps) => {
-    const ref = useRef<Reaptcha>(null);
+    const ref = useRef<CaptchaRef>(null);
     const [token, setToken] = useState('');
     const [otpSent, setOtpSent] = useState(false);
     const [emailForOtp, setEmailForOtp] = useState('');
@@ -243,20 +243,16 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
                             </div>
                         </>
                     )}
-                    {recaptchaEnabled && (
-                        <Reaptcha
-                            ref={ref}
-                            size={'invisible'}
-                            sitekey={siteKey || '_invalid_key'}
-                            onVerify={(response) => {
-                                setToken(response);
-                                submitForm();
-                            }}
-                            onExpire={() => {
-                                setToken('');
-                            }}
-                        />
-                    )}
+                    <Captcha
+                        ref={ref}
+                        onVerify={(response) => {
+                            setToken(response);
+                            submitForm();
+                        }}
+                        onExpire={() => {
+                            setToken('');
+                        }}
+                    />
                 </LoginFormContainer>
             )}
         </Formik>

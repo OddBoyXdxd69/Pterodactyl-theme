@@ -20,6 +20,7 @@ class SettingsServiceProvider extends ServiceProvider
         'app:name',
         'app:locale',
         'recaptcha:enabled',
+        'recaptcha:provider',
         'recaptcha:secret_key',
         'recaptcha:website_key',
         'pterodactyl:guzzle:timeout',

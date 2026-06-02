@@ -25,6 +25,7 @@ class AssetComposer
             'locale' => config('app.locale') ?? 'en',
             'recaptcha' => [
                 'enabled' => config('recaptcha.enabled', false),
+                'provider' => config('recaptcha.provider', 'recaptcha'),
                 'siteKey' => config('recaptcha.website_key') ?? '',
             ],
             'theme' => [

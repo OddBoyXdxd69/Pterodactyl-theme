@@ -8,7 +8,7 @@ import { object, string } from 'yup';
 import Field from '@/components/elements/Field';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
-import Reaptcha from 'reaptcha';
+import Captcha, { CaptchaRef } from '@/components/elements/Captcha';
 import useFlash from '@/plugins/useFlash';
 
 interface Values {
@@ -17,7 +17,7 @@ interface Values {
 }
 
 const LoginContainer = ({ history }: RouteComponentProps) => {
-    const ref = useRef<Reaptcha>(null);
+    const ref = useRef<CaptchaRef>(null);
     const [token, setToken] = useState('');
 
     const { clearFlashes, clearAndAddHttpError } = useFlash();
@@ -92,21 +92,17 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                             Login
                         </Button>
                     </div>
-                    {recaptchaEnabled && (
-                        <Reaptcha
-                            ref={ref}
-                            size={'invisible'}
-                            sitekey={siteKey || '_invalid_key'}
-                            onVerify={(response) => {
-                                setToken(response);
-                                submitForm();
-                            }}
-                            onExpire={() => {
-                                setSubmitting(false);
-                                setToken('');
-                            }}
-                        />
-                    )}
+                    <Captcha
+                        ref={ref}
+                        onVerify={(response) => {
+                            setToken(response);
+                            submitForm();
+                        }}
+                        onExpire={() => {
+                            setSubmitting(false);
+                            setToken('');
+                        }}
+                    />
                     <div css={tw`mt-6 text-center`}>
                         <Link
                             to={'/auth/password'}
