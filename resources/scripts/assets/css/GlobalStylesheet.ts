@@ -147,5 +147,8 @@ export default createGlobalStyle`
         box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15) !important;
         background-color: rgba(13, 14, 22, 0.85) !important;
     }
-`;
 
+    .grecaptcha-badge {
+        visibility: hidden !important;
+    }
+`;
