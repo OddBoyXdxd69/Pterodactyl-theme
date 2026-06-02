@@ -290,6 +290,15 @@ const RegisterContainer = ({ history }: RouteComponentProps) => {
                             }}
                         />
                     )}
+                    <div css={tw`mt-6 text-center text-xs text-neutral-500`}>
+                        Already have an account?{' '}
+                        <Link
+                            to={'/auth/login'}
+                            css={tw`text-purple-400 hover:text-purple-300 font-semibold no-underline transition-colors`}
+                        >
+                            Login
+                        </Link>
+                    </div>
                 </LoginFormContainer>
             )}
         </Formik>
