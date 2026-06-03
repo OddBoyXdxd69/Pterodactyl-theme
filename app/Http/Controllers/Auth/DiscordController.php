@@ -132,10 +132,12 @@ class DiscordController extends Controller
                 return redirect('/auth/login?error=discord_registration_disabled');
             }
 
-            // Generate username conforming to username rule constraints
-            $username = preg_replace('/[^a-zA-Z0-9._-]/', '', $discordUser['username']);
-            if (strlen($username) < 3) {
-                $username = 'discord_' . Str::random(6);
+            // Generate username conforming to username rule constraints (lowercase, starts/ends with alphanumeric, length 3-30)
+            $username = strtolower($discordUser['username'] ?? '');
+            $username = preg_replace('/[^a-z0-9._-]/', '', $username);
+            $username = trim($username, '._-');
+            if (empty($username) || strlen($username) < 3 || strlen($username) > 30 || !preg_match('/^[a-z0-9]([\w\.-]+)[a-z0-9]$/', $username)) {
+                $username = 'u_' . Str::random(10);
             }
             $originalUsername = $username;
             while (User::where('username', $username)->exists()) {
