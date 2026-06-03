@@ -81,6 +81,7 @@ Route::patch('/theme', [Admin\Settings\ThemeController::class, 'update']);
 
 Route::get('/subdomains', [Admin\Settings\SubdomainController::class, 'index'])->name('admin.subdomains');
 Route::patch('/subdomains', [Admin\Settings\SubdomainController::class, 'update']);
+Route::delete('/subdomains/{id}', [Admin\Settings\SubdomainController::class, 'destroy'])->name('admin.subdomains.delete');
 Route::get('/plugins', [Admin\Settings\PluginsController::class, 'index'])->name('admin.plugins');
 Route::patch('/plugins', [Admin\Settings\PluginsController::class, 'update']);
 Route::get('/versions', [Admin\Settings\VersionsController::class, 'index'])->name('admin.versions');

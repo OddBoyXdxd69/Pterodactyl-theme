@@ -84,4 +84,67 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-danger">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Active Client Subdomains</h3>
+                    <div class="box-tools">
+                        @if(count($subdomains) > 0)
+                            <form action="{{ route('admin.subdomains.delete', 'all') }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you absolutely sure you want to delete ALL subdomains? This will also remove them from Cloudflare!');">
+                                {!! csrf_field() !!}
+                                {!! method_field('DELETE') !!}
+                                <button type="submit" class="btn btn-sm btn-danger">Delete All Subdomains</button>
+                            </form>
+                        @endif
+                    </div>
+                </div>
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th>ID</th>
+                                <th>Server</th>
+                                <th>Subdomain</th>
+                                <th>Record Type</th>
+                                <th>Target IP</th>
+                                <th>Port</th>
+                                <th>Created</th>
+                                <th></th>
+                            </tr>
+                            @foreach($subdomains as $subdomain)
+                                <tr>
+                                    <td><code>{{ $subdomain->id }}</code></td>
+                                    <td>
+                                        @if($subdomain->server)
+                                            <a href="{{ route('admin.servers.view', $subdomain->server->id) }}">{{ $subdomain->server->name }}</a>
+                                        @else
+                                            <span class="text-muted">Deleted Server</span>
+                                        @endif
+                                    </td>
+                                    <td><a href="https://{{ $subdomain->subdomain }}.{{ $subdomain->domain }}" target="_blank">{{ $subdomain->subdomain }}.{{ $subdomain->domain }}</a></td>
+                                    <td><span class="label label-primary">{{ $subdomain->record_type }}</span></td>
+                                    <td><code>{{ $subdomain->ip }}</code></td>
+                                    <td><code>{{ $subdomain->port }}</code></td>
+                                    <td>{{ $subdomain->created_at->diffForHumans() }}</td>
+                                    <td class="text-center">
+                                        <form action="{{ route('admin.subdomains.delete', $subdomain->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this subdomain from the database and Cloudflare?');">
+                                            {!! csrf_field() !!}
+                                            {!! method_field('DELETE') !!}
+                                            <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @if(count($subdomains) === 0)
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted" style="padding: 20px 0;">No active subdomains have been created yet.</td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

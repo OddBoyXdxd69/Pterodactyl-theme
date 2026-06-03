@@ -9,6 +9,7 @@ use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\Contracts\Console\Kernel;
 use Pterodactyl\Http\Controllers\Controller;
 use Pterodactyl\Contracts\Repository\SettingsRepositoryInterface;
+use Pterodactyl\Models\Subdomain;
 
 class SubdomainController extends Controller
 {
@@ -27,7 +28,8 @@ class SubdomainController extends Controller
      */
     public function index(): View
     {
-        return view('admin.settings.subdomains');
+        $subdomains = Subdomain::with('server')->get();
+        return view('admin.settings.subdomains', compact('subdomains'));
     }
 
     /**
@@ -53,6 +55,26 @@ class SubdomainController extends Controller
 
         $this->kernel->call('queue:restart');
         $this->alert->success('Subdomains settings have been updated successfully and the queue worker was restarted.')->flash();
+
+        return redirect()->route('admin.subdomains');
+    }
+
+    /**
+     * Delete a single subdomain or all subdomains.
+     */
+    public function destroy(Request $request, $id = null): RedirectResponse
+    {
+        if ($id === 'all') {
+            $subdomains = Subdomain::all();
+            foreach ($subdomains as $subdomain) {
+                $subdomain->delete();
+            }
+            $this->alert->success('All subdomains have been successfully deleted from the database and Cloudflare.')->flash();
+        } else {
+            $subdomain = Subdomain::findOrFail($id);
+            $subdomain->delete();
+            $this->alert->success("Subdomain {$subdomain->subdomain}.{$subdomain->domain} has been removed successfully.")->flash();
+        }
 
         return redirect()->route('admin.subdomains');
     }

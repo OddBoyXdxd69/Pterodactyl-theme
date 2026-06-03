@@ -33,6 +33,61 @@ class Subdomain extends Model
         'port',
     ];
 
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function (Subdomain $subdomain) {
+            $settings = app(\Pterodactyl\Contracts\Repository\SettingsRepositoryInterface::class);
+            $cfEmail = $settings->get('settings::pterodactyl:subdomains:cf_email', '');
+            $cfKey = $settings->get('settings::pterodactyl:subdomains:cf_key', '');
+            $cfZone = $settings->get('settings::pterodactyl:subdomains:cf_zone_id', '');
+
+            if (!empty($cfEmail) && !empty($cfKey) && !empty($cfZone)) {
+                $names = [];
+                $fullSubdomain = "{$subdomain->subdomain}.{$subdomain->domain}";
+
+                if ($subdomain->record_type === 'SRV') {
+                    $names[] = "_minecraft._tcp.{$fullSubdomain}";
+                    $names[] = "target-{$subdomain->subdomain}.{$subdomain->domain}";
+                } else {
+                    $names[] = $fullSubdomain;
+                }
+
+                foreach ($names as $name) {
+                    try {
+                        $response = \Illuminate\Support\Facades\Http::withHeaders([
+                            'X-Auth-Email' => $cfEmail,
+                            'Authorization' => "Bearer {$cfKey}",
+                            'Content-Type' => 'application/json',
+                        ])->get("https://api.cloudflare.com/client/v4/zones/{$cfZone}/dns_records", [
+                            'name' => $name,
+                        ]);
+
+                        if ($response->successful()) {
+                            $records = $response->json('result') ?? [];
+                            foreach ($records as $record) {
+                                $recordId = $record['id'] ?? null;
+                                if ($recordId) {
+                                    \Illuminate\Support\Facades\Http::withHeaders([
+                                        'X-Auth-Email' => $cfEmail,
+                                        'Authorization' => "Bearer {$cfKey}",
+                                        'Content-Type' => 'application/json',
+                                    ])->delete("https://api.cloudflare.com/client/v4/zones/{$cfZone}/dns_records/{$recordId}");
+                                }
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        \Illuminate\Support\Facades\Log::error("Failed to delete Cloudflare DNS record for {$name}: " . $e->getMessage());
+                    }
+                }
+            }
+        });
+    }
+
     public static array $validationRules = [
         'server_id' => 'required|numeric|exists:servers,id',
         'subdomain' => 'required|string|regex:/^[a-zA-Z0-9-]+$/|max:64',
