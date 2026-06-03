@@ -38,10 +38,16 @@ class RegistrationConfigController extends Controller
         $request->validate([
             'pterodactyl:registration:enabled' => 'required|in:0,1',
             'pterodactyl:registration:otp' => 'nullable|in:0,1',
+            'pterodactyl:discord:enabled' => 'required|in:0,1',
+            'pterodactyl:discord:client_id' => 'nullable|string|max:191',
+            'pterodactyl:discord:client_secret' => 'nullable|string|max:191',
         ]);
 
         $this->settings->set('settings::pterodactyl:registration:enabled', $request->input('pterodactyl:registration:enabled'));
         $this->settings->set('settings::pterodactyl:registration:otp', $request->input('pterodactyl:registration:otp', '0'));
+        $this->settings->set('settings::pterodactyl:discord:enabled', $request->input('pterodactyl:discord:enabled'));
+        $this->settings->set('settings::pterodactyl:discord:client_id', $request->input('pterodactyl:discord:client_id') ?? '');
+        $this->settings->set('settings::pterodactyl:discord:client_secret', $request->input('pterodactyl:discord:client_secret') ?? '');
 
         $this->kernel->call('queue:restart');
         $this->alert->success('User registration configurations have been updated successfully and the queue worker was restarted.')->flash();

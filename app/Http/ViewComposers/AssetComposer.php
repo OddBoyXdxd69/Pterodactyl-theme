@@ -49,6 +49,9 @@ class AssetComposer
             'registration' => [
                 'enabled' => (bool) config('pterodactyl.registration.enabled', false),
             ],
+            'discord' => [
+                'enabled' => (bool) config('pterodactyl.discord.enabled', false),
+            ],
         ]);
     }
 }

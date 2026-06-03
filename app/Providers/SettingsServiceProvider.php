@@ -52,6 +52,9 @@ class SettingsServiceProvider extends ServiceProvider
         'pterodactyl:tickets:clear_closed_days',
         'pterodactyl:registration:enabled',
         'pterodactyl:registration:otp',
+        'pterodactyl:discord:enabled',
+        'pterodactyl:discord:client_id',
+        'pterodactyl:discord:client_secret',
     ];
 
     /**

@@ -28,6 +28,10 @@ Route::middleware(['throttle:authentication'])->group(function () {
     Route::post('/login', [Auth\LoginController::class, 'login'])->middleware('recaptcha');
     Route::post('/login/checkpoint', Auth\LoginCheckpointController::class)->name('auth.login-checkpoint');
 
+    // Discord routes.
+    Route::get('/discord', [Auth\DiscordController::class, 'redirect'])->name('auth.discord');
+    Route::get('/discord/callback', [Auth\DiscordController::class, 'callback'])->name('auth.discord.callback');
+
     // Registration endpoint.
     Route::post('/register', [Auth\RegisterController::class, 'register'])->middleware('recaptcha');
     Route::post('/register/otp', [Auth\RegisterController::class, 'verifyOtp'])->middleware('recaptcha');
