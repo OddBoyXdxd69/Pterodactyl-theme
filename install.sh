@@ -102,6 +102,8 @@ files=(
   "routes/api-remote.php"
   "resources/views/admin/settings/backups.blade.php"
   "public/node_backup_agent.sh"
+  "app/Http/Controllers/Api/Remote/Backups/BackupStatusController.php"
+  "app/Jobs/UploadBackupToGDriveJob.php"
 )
 
 # 2. Download and replace files

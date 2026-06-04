@@ -113,40 +113,39 @@ class BackupController extends Controller
             }
         }
 
+        $serversToBackup = [];
         if ($nodeId) {
-            $servers = Server::where('node_id', $nodeId)->get();
-            foreach ($servers as $server) {
-                DB::table('universal_backups')->insert([
-                    'node_id' => $nodeId,
-                    'server_id' => $server->id,
-                    'backup_type' => 'server',
-                    'status' => 'pending',
-                    'filename' => $server->name . '_backup_' . date('Y-m-d_H-i-s') . '.tar.gz',
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-                $triggeredCount++;
-            }
+            $serversToBackup = Server::where('node_id', $nodeId)->get();
         } elseif (!empty($serverIds)) {
-            foreach ($serverIds as $serverId) {
-                $server = Server::find($serverId);
-                if ($server) {
+            $serversToBackup = Server::whereIn('id', $serverIds)->get();
+        }
+
+        if (count($serversToBackup) > 0) {
+            $initiateBackupService = app(\Pterodactyl\Services\Backups\InitiateBackupService::class);
+            foreach ($serversToBackup as $server) {
+                try {
+                    // Create native backup on Wings (asynchronous)
+                    $backup = $initiateBackupService->handle($server, 'GDrive Backup ' . date('Y-m-d H:i:s'), true);
+
                     DB::table('universal_backups')->insert([
                         'node_id' => $server->node_id,
                         'server_id' => $server->id,
                         'backup_type' => 'server',
-                        'status' => 'pending',
+                        'status' => 'backing_up',
+                        'file_id' => $backup->uuid, // store native backup uuid temporarily
                         'filename' => $server->name . '_backup_' . date('Y-m-d_H-i-s') . '.tar.gz',
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
                     $triggeredCount++;
+                } catch (\Exception $e) {
+                    $this->alert->danger('Failed to initiate backup for server ' . $server->name . ': ' . $e->getMessage())->flash();
                 }
             }
         }
 
         if ($triggeredCount > 0) {
-            $this->alert->success("Successfully queued/executed {$triggeredCount} backup task(s).")->flash();
+            $this->alert->success("Successfully triggered {$triggeredCount} backup task(s) on the nodes.")->flash();
         } else {
             $this->alert->warning('No backups were selected or executed.')->flash();
         }
@@ -155,7 +154,7 @@ class BackupController extends Controller
     }
 
     /**
-     * Restore database or queue server restore.
+     * Restore database or trigger server restore via Wings.
      */
     public function restore(Request $request): RedirectResponse
     {
@@ -176,11 +175,50 @@ class BackupController extends Controller
             }
         } else {
             // Restore server backup onto Node VPS
-            DB::table('universal_backups')
-                ->where('id', $backupId)
-                ->update(['status' => 'restore_pending', 'updated_at' => now()]);
+            $server = Server::find($backup->server_id);
+            if (!$server) {
+                $this->alert->danger('Target server not found.')->flash();
+                return redirect()->route('admin.settings.backups');
+            }
 
-            $this->alert->success('Server restore task has been queued. The Node backup agent will process it shortly.')->flash();
+            try {
+                // Create a temporary native Backup record in database to satisfy Wings API request
+                $tempBackup = new \Pterodactyl\Models\Backup();
+                $tempBackup->server_id = $server->id;
+                $tempBackup->uuid = \Ramsey\Uuid\Uuid::uuid4()->toString();
+                $tempBackup->name = 'Temp Restore ' . $backup->id;
+                $tempBackup->disk = 'local';
+                $tempBackup->is_successful = true;
+                $tempBackup->save();
+
+                // Get download URL from Google Drive API with token query param
+                $accessToken = $this->backupService->getAccessToken();
+                $gdriveDownloadUrl = sprintf(
+                    'https://www.googleapis.com/drive/v3/files/%s?alt=media&access_token=%s',
+                    $backup->file_id,
+                    $accessToken
+                );
+
+                // Update universal backup record status to restoring
+                DB::table('universal_backups')
+                    ->where('id', $backupId)
+                    ->update(['status' => 'restoring', 'updated_at' => now()]);
+
+                // Call Wings API directly to start restoration
+                $daemonBackupRepository = app(\Pterodactyl\Repositories\Wings\DaemonBackupRepository::class);
+                $daemonBackupRepository->setServer($server)->restore($tempBackup, $gdriveDownloadUrl, true);
+
+                $this->alert->success('Server restore task has been initiated on the node VPS.')->flash();
+            } catch (\Exception $e) {
+                if (isset($tempBackup) && $tempBackup->exists) {
+                    $tempBackup->delete();
+                }
+                DB::table('universal_backups')
+                    ->where('id', $backupId)
+                    ->update(['status' => 'failed', 'updated_at' => now()]);
+
+                $this->alert->danger('Failed to initiate restore on Wings: ' . $e->getMessage())->flash();
+            }
         }
 
         return redirect()->route('admin.settings.backups');
