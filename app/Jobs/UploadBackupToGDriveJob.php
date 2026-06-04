@@ -33,7 +33,8 @@ class UploadBackupToGDriveJob implements ShouldQueue
     public function handle(
         DownloadLinkService $downloadLinkService,
         UniversalBackupService $universalBackupService,
-        DaemonBackupRepository $daemonBackupRepository
+        DaemonBackupRepository $daemonBackupRepository,
+        \Pterodactyl\Contracts\Repository\SettingsRepositoryInterface $settings
     ): void {
         $backup = Backup::find($this->backupId);
         if (!$backup) {
@@ -59,7 +60,7 @@ class UploadBackupToGDriveJob implements ShouldQueue
                 throw new \Exception('Failed to retrieve Google Drive access token.');
             }
 
-            $folderId = config('pterodactyl.backups.gdrive_folder_id');
+            $folderId = $settings->get('settings::pterodactyl:backups:gdrive_folder_id');
             $universalBackup = DB::table('universal_backups')->where('id', $this->universalBackupId)->first();
             $filename = $universalBackup->filename;
 

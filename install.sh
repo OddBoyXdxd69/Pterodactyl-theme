@@ -109,6 +109,8 @@ files=(
   "app/Http/Controllers/Admin/Servers/ServerViewController.php"
   "app/Http/Controllers/Admin/Servers/ServerTransferController.php"
   "resources/views/admin/servers/view/manage.blade.php"
+  "app/Services/Eggs/EggConfigurationService.php"
+  "app/Repositories/Wings/DaemonRepository.php"
 )
 
 # 2. Download and replace files
