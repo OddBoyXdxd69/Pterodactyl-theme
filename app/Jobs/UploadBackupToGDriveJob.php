@@ -130,6 +130,24 @@ class UploadBackupToGDriveJob implements ShouldQueue
                     'updated_at' => now(),
                 ]);
 
+            // Delete previous completed backups for the same server
+            try {
+                $oldServerBackups = DB::table('universal_backups')
+                    ->where('server_id', $backup->server_id)
+                    ->where('status', 'completed')
+                    ->where('id', '!=', $this->universalBackupId)
+                    ->get();
+
+                foreach ($oldServerBackups as $old) {
+                    if ($old->file_id) {
+                        $universalBackupService->deleteFile($old->file_id);
+                    }
+                    DB::table('universal_backups')->where('id', $old->id)->delete();
+                }
+            } catch (\Exception $ex) {
+                Log::warning('Failed to purge old server backups: ' . $ex->getMessage());
+            }
+
         } catch (\Exception $e) {
             Log::error('UploadBackupToGDriveJob failed: ' . $e->getMessage());
             DB::table('universal_backups')

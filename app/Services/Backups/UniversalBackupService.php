@@ -232,6 +232,23 @@ class UniversalBackupService
         @unlink($tempFile);
 
         if ($fileId) {
+            // Delete previous database backups from GDrive and DB
+            try {
+                $oldDbBackups = DB::table('universal_backups')
+                    ->where('backup_type', 'database')
+                    ->where('status', 'completed')
+                    ->get();
+
+                foreach ($oldDbBackups as $old) {
+                    if ($old->file_id) {
+                        $this->deleteFile($old->file_id);
+                    }
+                    DB::table('universal_backups')->where('id', $old->id)->delete();
+                }
+            } catch (\Exception $ex) {
+                Log::warning('Failed to purge old database backups: ' . $ex->getMessage());
+            }
+
             DB::table('universal_backups')->insert([
                 'backup_type' => 'database',
                 'status' => 'completed',
