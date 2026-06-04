@@ -144,7 +144,7 @@ export default () => {
     const location = useLocation();
     const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
     const rootAdmin = useStoreState((state: ApplicationStore) => state.user.data!.rootAdmin);
-    const discordUrl = useStoreState((state: ApplicationStore) => state.settings.data!.theme?.discord_url);
+    const discordUrl = (useStoreState((state: ApplicationStore) => state.settings.data!.theme?.discord_url) || '').trim() || 'https://discord.gg';
     const ticketsConfig = (window as any).SiteConfiguration?.tickets;
     const isTicketsEnabled = !!(ticketsConfig?.enabled ?? true);
     const [isLoggingOut, setIsLoggingOut] = useState(false);

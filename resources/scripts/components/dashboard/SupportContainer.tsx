@@ -193,7 +193,7 @@ export default () => {
 
     // If support system is disabled globally
     if (!isTicketsEnabled) {
-        const discordUrl = (window as any).SiteConfiguration?.theme?.discord_url;
+        const discordUrl = ((window as any).SiteConfiguration?.theme?.discord_url || '').trim() || 'https://discord.gg';
         return (
             <PageContentBlock title={'Support'}>
                 <div css={tw`bg-neutral-900 border border-neutral-800 rounded-lg p-12 text-center text-neutral-400 flex flex-col items-center justify-center`}>

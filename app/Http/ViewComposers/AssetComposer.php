@@ -29,9 +29,9 @@ class AssetComposer
                 'siteKey' => config('recaptcha.website_key') ?? '',
             ],
             'theme' => [
-                'logo' => config('pterodactyl.theme.login_logo') ?: '/assets/svgs/pterodactyl.svg',
+                'logo' => trim(config('pterodactyl.theme.login_logo', '')) ?: '/assets/svgs/pterodactyl.svg',
                 'footer' => config('pterodactyl.theme.login_footer') ?: '',
-                'discord_url' => config('pterodactyl.theme.discord_url') ?: '',
+                'discord_url' => trim(config('pterodactyl.theme.discord_url', '')) ?: 'https://discord.gg',
             ],
             'plugins' => [
                 'enabled' => (bool) config('pterodactyl.plugins.enabled', false),

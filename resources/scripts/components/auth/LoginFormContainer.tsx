@@ -33,7 +33,7 @@ const Container = styled.div`
 `;
 
 export default forwardRef<HTMLFormElement, Props>(({ title, ...props }, ref) => {
-    const logo = useStoreState((state) => state.settings.data?.theme?.logo) || '/assets/svgs/pterodactyl.svg';
+    const logo = (useStoreState((state) => state.settings.data?.theme?.logo) || '').trim() || '/assets/svgs/pterodactyl.svg';
     const footer = useStoreState((state) => state.settings.data?.theme?.footer);
 
     return (
