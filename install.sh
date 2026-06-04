@@ -109,6 +109,14 @@ files=(
   "app/Http/Controllers/Admin/Servers/ServerViewController.php"
   "app/Http/Controllers/Admin/Servers/ServerTransferController.php"
   "resources/views/admin/servers/view/manage.blade.php"
+  "app/Http/Controllers/Auth/DiscordController.php"
+  "app/Http/Middleware/VerifyReCaptcha.php"
+  "app/Http/Requests/Admin/Settings/AdvancedSettingsFormRequest.php"
+  "app/Services/Servers/ServerDeletionService.php"
+  "resources/scripts/components/auth/ForgotPasswordContainer.tsx"
+  "resources/scripts/components/elements/Captcha.tsx"
+  "resources/views/admin/settings/advanced.blade.php"
+  "resources/views/admin/settings/mail.blade.php"
 )
 
 # 2. Download and replace files
