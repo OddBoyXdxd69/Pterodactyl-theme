@@ -196,22 +196,50 @@ export default () => {
         const discordUrl = ((window as any).SiteConfiguration?.theme?.discord_url || '').trim() || 'https://discord.gg';
         return (
             <PageContentBlock title={'Support'}>
-                <div css={tw`bg-neutral-900 border border-neutral-800 rounded-lg p-12 text-center text-neutral-400 flex flex-col items-center justify-center`}>
-                    <FontAwesomeIcon icon={faHeadset} size={'3x'} css={tw`text-purple-500 mb-4`} />
-                    <p css={tw`text-lg font-semibold text-neutral-200`}>Support Tickets System Offline</p>
-                    <p css={tw`text-sm text-neutral-500 mt-1 mb-6`}>The support ticket system is currently disabled by the administrator. For any help, please join our Discord server.</p>
-                    {discordUrl ? (
-                        <a href={discordUrl} target="_blank" rel="noreferrer">
-                            <Button css={tw`bg-[#5865F2] hover:bg-[#4752C4] border-none text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-transform active:scale-95 flex items-center space-x-2`}>
-                                <svg css={tw`w-5 h-5 fill-current mr-2`} viewBox="0 0 127.14 96.36">
-                                    <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,52.88,6.83,77.19,77.19,0,0,0,49.58,0,105.15,105.15,0,0,0,19.14,8.07C2.81,32.22-1.71,55.77.49,79a105.73,105.73,0,0,0,32.08,16.22,77.7,77.7,0,0,0,6.77-11A68.58,68.58,0,0,1,28.8,79.3c.92-.68,1.83-1.39,2.71-2.12a74.19,74.19,0,0,0,74.75,0c.88.73,1.79,1.44,2.71,2.12a68.43,68.43,0,0,1-10.55,4.9,77.6,77.6,0,0,0,6.77,11,105.67,105.67,0,0,0,32.14-16.22C129.41,49.59,124.62,26.33,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5.14-12.67,11.43-12.67S53.86,46,53.86,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53s5.14-12.67,11.45-12.67S96.14,46,96.14,53,91,65.69,84.69,65.69Z"/>
-                                </svg>
-                                <span>Join Discord Support</span>
-                            </Button>
-                        </a>
-                    ) : (
-                        <p css={tw`text-xs text-neutral-600`}>No Discord support link configured.</p>
-                    )}
+                <div css={tw`flex flex-col items-center justify-center min-h-[50vh] px-4`}>
+                    <div 
+                        css={tw`w-full max-w-lg bg-[#0d0e16] bg-opacity-75 border border-neutral-800 rounded-3xl p-8 md:p-12 text-center shadow-2xl relative overflow-hidden`}
+                        style={{ backdropFilter: 'blur(8px)' }}
+                    >
+                        {/* Glow decorative effect */}
+                        <div 
+                            css={tw`absolute -top-24 -left-24 w-48 h-48 bg-purple-600 rounded-full opacity-20 filter blur-3xl pointer-events-none`}
+                        />
+                        <div 
+                            css={tw`absolute -bottom-24 -right-24 w-48 h-48 bg-[#5865F2] rounded-full opacity-20 filter blur-3xl pointer-events-none`}
+                        />
+
+                        <div css={tw`relative z-10 flex flex-col items-center`}>
+                            <div css={tw`w-16 h-16 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center mb-6 shadow-inner`}>
+                                <FontAwesomeIcon icon={faHeadset} size={'2x'} css={tw`text-purple-400`} />
+                            </div>
+                            
+                            <h2 css={tw`text-2xl md:text-3xl font-bold text-white tracking-tight`}>
+                                Join Discord for Support
+                            </h2>
+                            
+                            <p css={tw`text-sm md:text-base text-neutral-400 mt-3 mb-8 leading-relaxed max-w-md`}>
+                                The support ticket system is currently offline. For any assistance, questions, or updates, please join our official Discord server.
+                            </p>
+
+                            <a 
+                                href={discordUrl} 
+                                target="_blank" 
+                                rel="noreferrer"
+                                css={tw`w-full sm:w-auto inline-block`}
+                            >
+                                <button 
+                                    className="w-full sm:w-auto bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold px-8 py-4 rounded-2xl shadow-lg transition-all duration-150 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center space-x-3 cursor-pointer"
+                                    style={{ boxShadow: '0 4px 20px rgba(88, 101, 242, 0.3)' }}
+                                >
+                                    <svg css={tw`w-5 h-5 fill-current`} viewBox="0 0 127.14 96.36">
+                                        <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,52.88,6.83,77.19,77.19,0,0,0,49.58,0,105.15,105.15,0,0,0,19.14,8.07C2.81,32.22-1.71,55.77.49,79a105.73,105.73,0,0,0,32.08,16.22,77.7,77.7,0,0,0,6.77-11A68.58,68.58,0,0,1,28.8,79.3c.92-.68,1.83-1.39,2.71-2.12a74.19,74.19,0,0,0,74.75,0c.88.73,1.79,1.44,2.71,2.12a68.43,68.43,0,0,1-10.55,4.9,77.6,77.6,0,0,0,6.77,11,105.67,105.67,0,0,0,32.14-16.22C129.41,49.59,124.62,26.33,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5.14-12.67,11.43-12.67S53.86,46,53.86,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53s5.14-12.67,11.45-12.67S96.14,46,96.14,53,91,65.69,84.69,65.69Z"/>
+                                    </svg>
+                                    <span>Join Discord Server</span>
+                                </button>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </PageContentBlock>
         );
