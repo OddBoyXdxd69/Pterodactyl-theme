@@ -29,6 +29,66 @@ class BackupController extends Controller
     {
         $nodes = Node::all();
         $servers = Server::all();
+
+        // Perform Google Drive Synchronization
+        if ($this->settings->get('settings::pterodactyl:backups:enabled', false)) {
+            $gdriveFiles = $this->backupService->listFiles();
+            $gdriveFileIds = [];
+
+            foreach ($gdriveFiles as $file) {
+                $fileId = $file['id'] ?? null;
+                $filename = $file['name'] ?? null;
+                $fileSize = $file['size'] ?? null;
+                $createdTime = isset($file['createdTime']) ? \Illuminate\Support\Carbon::parse($file['createdTime']) : now();
+
+                if (!$fileId || !$filename) {
+                    continue;
+                }
+
+                $gdriveFileIds[] = $fileId;
+
+                // Check if this backup record already exists
+                $exists = DB::table('universal_backups')->where('file_id', $fileId)->exists();
+                if (!$exists) {
+                    if (str_starts_with($filename, 'panel_backup_')) {
+                        // Database backup
+                        DB::table('universal_backups')->insert([
+                            'backup_type' => 'database',
+                            'status' => 'completed',
+                            'file_id' => $fileId,
+                            'filename' => $filename,
+                            'file_size' => $fileSize,
+                            'created_at' => $createdTime,
+                            'updated_at' => $createdTime
+                        ]);
+                    } elseif (str_contains($filename, '_backup_')) {
+                        // Server file backup
+                        $parts = explode('_backup_', $filename);
+                        $serverName = $parts[0];
+                        $server = Server::where('name', $serverName)->first();
+
+                        DB::table('universal_backups')->insert([
+                            'node_id' => $server ? $server->node_id : null,
+                            'server_id' => $server ? $server->id : null,
+                            'backup_type' => 'server',
+                            'status' => 'completed',
+                            'file_id' => $fileId,
+                            'filename' => $filename,
+                            'file_size' => $fileSize,
+                            'created_at' => $createdTime,
+                            'updated_at' => $createdTime
+                        ]);
+                    }
+                }
+            }
+
+            // Clean up database completed records that no longer exist on Google Drive
+            DB::table('universal_backups')
+                ->where('status', 'completed')
+                ->whereNotIn('file_id', $gdriveFileIds)
+                ->delete();
+        }
+
         $backups = DB::table('universal_backups')
             ->orderBy('created_at', 'desc')
             ->get();
