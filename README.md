@@ -63,24 +63,26 @@ To configure the allowed domains and Cloudflare credentials for client subdomain
    * Select your **Authentication Method** (OAuth2 Client or Service Account JSON).
    * Enter your Google Drive **Target Folder ID**.
    * Fill in the corresponding OAuth2 client fields or paste the JSON key content.
-4. Click **Save Configurations**.
-5. Set up the Node Backup Agent on your Node VPS(s) (see below).
+4. Set **Ignore Server Backup Limits** to **Yes** if you wish to bypass standard server quotas.
+5. Click **Save Configurations**.
+6. Backups will run instantly on the nodes via the existing connected **Wings API**. No cron jobs or script installations are required on the node VPS!
 
 ---
 
-## Node Backup Agent Setup
+## Suggested Future Features
 
-On each of your Node (Wings) VPS servers, configure the backup agent to run on a regular cron job to process backup and restore tasks:
+Here are 10 suggested features to further expand the panel's capabilities:
 
-1. Download and install the agent script on the Node VPS:
-   ```bash
-   curl -sSL -o /usr/local/bin/node_backup_agent.sh https://<your-panel-domain>/node_backup_agent.sh
-   chmod +x /usr/local/bin/node_backup_agent.sh
-   ```
-2. Create a cron job to run the agent every minute by running `crontab -e` and adding:
-   ```cron
-   * * * * * /usr/local/bin/node_backup_agent.sh >/dev/null 2>&1
-   ```
+1. **AES-256 Backup Encryption**: Add an option to encrypt tarballs on the node with AES-256 before uploading to Google Drive, ensuring complete data security and privacy.
+2. **Automated Discord Bot Monitoring**: A built-in Discord bot that admins/users can trigger manually using `/monitor` in their server to receive real-time resource tracking (CPU, RAM, Status, Player Count) updated every 60 seconds.
+3. **Advanced Backup Retention Rules**: Implement a retention policy scheduler (e.g., grandfather-father-son scheme: keep 7 daily, 4 weekly, and 12 monthly backups) instead of only holding the most recent backup.
+4. **Client-Owned Cloud Credentials**: Allow individual clients to connect their own Google Drive or Dropbox accounts in their dashboard settings to save their own server backups.
+5. **Interactive Glassmorphic Customizer**: A visual theme editor inside the admin panel to customize gradients, colors, glass opacity levels, and custom backgrounds on-the-fly.
+6. **Node-to-Node Live Transfers**: One-click server migration that zips, transfers, and restores a server between different Node VPS hosts directly from the admin panel using Wings APIs.
+7. **Cloudflare SSL Proxy for Custom Client Domains**: Allow clients to point their own custom domains (e.g. `play.myname.com`) to allocations and automatically issue SSL certificates via Cloudflare proxy API.
+8. **Live Container Resource Dashboard**: Integration of visual canvas charts showing historical memory, CPU, and IO usage graphs directly inside the server admin view.
+9. **In-game Chat to Discord sync (RCON/Webhooks)**: Bi-directional chat sync linking server RCON console and player activities to selected Discord channels.
+10. **Support Billing & Invoicing Engine**: Complete ticket integration with Stripe/PayPal payment gateways to manage subscription-based container creations and suspensions automatically.
 
 ---
 
