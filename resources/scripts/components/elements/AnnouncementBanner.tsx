@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useStoreState } from '@/state';
+import { useStoreState } from 'easy-peasy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle, faExclamationTriangle, faExclamationCircle, faTimes } from '@fortawesome/free-solid-svg-icons';
 import tw from 'twin.macro';
