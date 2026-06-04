@@ -161,23 +161,27 @@
         <div class="col-xs-12 col-md-6">
             <form action="{{ route('admin.settings.backups.trigger') }}" method="POST">
                 @csrf
-                <div class="box box-success">
+                <input type="hidden" name="backup_database" value="1">
+                <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title"><i class="fa fa-play-circle"></i> Trigger Instant Backup</h3>
+                        <h3 class="box-title"><i class="fa fa-database"></i> Trigger Database & Users Backup</h3>
                     </div>
                     <div class="box-body">
-                        <div class="form-group">
-                            <div class="checkbox checkbox-primary">
-                                <label>
-                                    <input type="checkbox" name="backup_database" value="1" checked>
-                                    <strong>Back up Panel Database & Users Structure</strong>
-                                </label>
-                            </div>
-                            <p class="text-muted small">Will generate an SQL dump of the panel database and upload it directly to Google Drive instantly.</p>
-                        </div>
+                        <p>Generates a complete MySQL dump of your Pterodactyl panel database, including all users, node details, server records, configurations, nests, and eggs structure, and uploads it directly to Google Drive cloud storage.</p>
+                    </div>
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-play"></i> Run Database Backup</button>
+                    </div>
+                </div>
+            </form>
 
-                        <hr>
-
+            <form action="{{ route('admin.settings.backups.trigger') }}" method="POST">
+                @csrf
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"><i class="fa fa-server"></i> Trigger Server File Backups</h3>
+                    </div>
+                    <div class="box-body">
                         <div class="form-group">
                             <label class="control-label">Select Node VPS (Optional)</label>
                             <select class="form-control" name="backup_node_id" id="backup_node_id">
@@ -210,7 +214,7 @@
                         </div>
                     </div>
                     <div class="box-footer">
-                        <button type="submit" class="btn btn-success pull-right">Trigger Backup Task(s)</button>
+                        <button type="submit" class="btn btn-success pull-right"><i class="fa fa-play"></i> Run Server Backups</button>
                     </div>
                 </div>
             </form>
