@@ -92,6 +92,39 @@
                                 </div>
                             </div>
                         </div>
+
+                        <hr>
+                        <h4><i class="fa fa-clock-o"></i> Automated Backup Scheduler</h4>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label class="control-label">Automated Scheduler</label>
+                                <div>
+                                    <select class="form-control" name="pterodactyl:backups:schedule_enabled">
+                                        <option value="1" @if(config('pterodactyl.backups.schedule_enabled') == '1') selected @endif>Enabled</option>
+                                        <option value="0" @if(config('pterodactyl.backups.schedule_enabled') != '1') selected @endif>Disabled</option>
+                                    </select>
+                                    <p class="text-muted small">Enable or disable periodic background backups.</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="control-label">Backup Interval (Hours)</label>
+                                <div>
+                                    <input type="number" class="form-control" name="pterodactyl:backups:schedule_interval" value="{{ config('pterodactyl.backups.schedule_interval', 24) }}" min="1" required>
+                                    <p class="text-muted small">Specify how often to run the backup in hours (e.g. 24 for daily).</p>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="control-label">Scheduled Backup Type</label>
+                                <div>
+                                    <select class="form-control" name="pterodactyl:backups:schedule_type">
+                                        <option value="both" @if(config('pterodactyl.backups.schedule_type') === 'both') selected @endif>Both Database & Servers</option>
+                                        <option value="database" @if(config('pterodactyl.backups.schedule_type') === 'database') selected @endif>Database Only</option>
+                                        <option value="all_servers" @if(config('pterodactyl.backups.schedule_type') === 'all_servers') selected @endif>All Servers Files Only</option>
+                                    </select>
+                                    <p class="text-muted small">Select the scope of automated backups.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="box-footer">
                         <button type="submit" class="btn btn-primary pull-right">Save Configurations</button>

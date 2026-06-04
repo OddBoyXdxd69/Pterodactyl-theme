@@ -74,6 +74,9 @@ class BackupController extends Controller
             'pterodactyl:backups:gdrive_refresh_token' => 'nullable|string',
             'pterodactyl:backups:gdrive_service_account' => 'nullable|string',
             'pterodactyl:backups:gdrive_folder_id' => 'nullable|string',
+            'pterodactyl:backups:schedule_enabled' => 'required|in:0,1',
+            'pterodactyl:backups:schedule_interval' => 'required|integer|min:1',
+            'pterodactyl:backups:schedule_type' => 'required|in:database,all_servers,both',
         ]);
 
         $this->settings->set('settings::pterodactyl:backups:enabled', $request->input('pterodactyl:backups:enabled'));
@@ -83,6 +86,9 @@ class BackupController extends Controller
         $this->settings->set('settings::pterodactyl:backups:gdrive_refresh_token', $request->input('pterodactyl:backups:gdrive_refresh_token') ?? '');
         $this->settings->set('settings::pterodactyl:backups:gdrive_service_account', $request->input('pterodactyl:backups:gdrive_service_account') ?? '');
         $this->settings->set('settings::pterodactyl:backups:gdrive_folder_id', $request->input('pterodactyl:backups:gdrive_folder_id') ?? '');
+        $this->settings->set('settings::pterodactyl:backups:schedule_enabled', $request->input('pterodactyl:backups:schedule_enabled'));
+        $this->settings->set('settings::pterodactyl:backups:schedule_interval', $request->input('pterodactyl:backups:schedule_interval'));
+        $this->settings->set('settings::pterodactyl:backups:schedule_type', $request->input('pterodactyl:backups:schedule_type'));
 
         $this->alert->success('Universal Backups configurations have been successfully updated.')->flash();
         return redirect()->route('admin.settings.backups');

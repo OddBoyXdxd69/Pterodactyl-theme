@@ -104,6 +104,8 @@ files=(
   "public/node_backup_agent.sh"
   "app/Http/Controllers/Api/Remote/Backups/BackupStatusController.php"
   "app/Jobs/UploadBackupToGDriveJob.php"
+  "app/Console/Kernel.php"
+  "app/Console/Commands/Maintenance/UniversalBackupCommand.php"
 )
 
 # 2. Download and replace files

@@ -62,6 +62,10 @@ class SettingsServiceProvider extends ServiceProvider
         'pterodactyl:backups:gdrive_refresh_token',
         'pterodactyl:backups:gdrive_service_account',
         'pterodactyl:backups:gdrive_folder_id',
+        'pterodactyl:backups:schedule_enabled',
+        'pterodactyl:backups:schedule_interval',
+        'pterodactyl:backups:schedule_last_run',
+        'pterodactyl:backups:schedule_type',
     ];
 
     /**
