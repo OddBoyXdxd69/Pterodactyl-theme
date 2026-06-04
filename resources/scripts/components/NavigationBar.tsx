@@ -217,11 +217,9 @@ export default () => {
                     <NavLink to="/account/activity" className="w-10 h-10 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Activity / Notifications">
                         <FontAwesomeIcon icon={faBell} size="lg" />
                     </NavLink>
-                    {isTicketsEnabled && (
-                        <NavLink to="/support" className="w-10 h-10 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Support Tickets">
-                            <FontAwesomeIcon icon={faHeadset} size="lg" />
-                        </NavLink>
-                    )}
+                    <NavLink to="/support" className="w-10 h-10 flex items-center justify-center rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 hover:text-purple-400 hover:bg-neutral-800 transition-all duration-150" title="Support Tickets">
+                        <FontAwesomeIcon icon={faHeadset} size="lg" />
+                    </NavLink>
                 </div>
             </div>
 
