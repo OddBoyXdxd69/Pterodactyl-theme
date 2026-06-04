@@ -12,6 +12,10 @@ export interface SiteSettings {
         footer?: string;
         discord_url?: string;
         support_url?: string;
+        announcement_enabled?: boolean;
+        announcement_text?: string;
+        announcement_type?: 'info' | 'warning' | 'critical';
+        announcement_dismissible?: boolean;
     };
     registration?: {
         enabled: boolean;

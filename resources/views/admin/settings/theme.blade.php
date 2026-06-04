@@ -64,6 +64,50 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <hr style="border-color: #444;" />
+                                <h3 class="box-title" style="margin-bottom: 15px; color: #fff;">Global Announcement Banner</h3>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="control-label">Enable Announcement</label>
+                                <div>
+                                    <select class="form-control" name="pterodactyl:theme:announcement_enabled">
+                                        <option value="true" {{ old('pterodactyl:theme:announcement_enabled', config('pterodactyl.theme.announcement_enabled')) === 'true' || config('pterodactyl.theme.announcement_enabled') === true ? 'selected' : '' }}>Enabled</option>
+                                        <option value="false" {{ old('pterodactyl:theme:announcement_enabled', config('pterodactyl.theme.announcement_enabled')) === 'false' || config('pterodactyl.theme.announcement_enabled') === false ? 'selected' : '' }}>Disabled</option>
+                                    </select>
+                                    <p class="text-muted"><small>Show or hide the global announcement banner for all users.</small></p>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="control-label">Dismissible (Can Close)</label>
+                                <div>
+                                    <select class="form-control" name="pterodactyl:theme:announcement_dismissible">
+                                        <option value="true" {{ old('pterodactyl:theme:announcement_dismissible', config('pterodactyl.theme.announcement_dismissible')) === 'true' || config('pterodactyl.theme.announcement_dismissible') === true ? 'selected' : '' }}>Yes (Show × close button)</option>
+                                        <option value="false" {{ old('pterodactyl:theme:announcement_dismissible', config('pterodactyl.theme.announcement_dismissible')) === 'false' || config('pterodactyl.theme.announcement_dismissible') === false ? 'selected' : '' }}>No (Show always, cannot close)</option>
+                                    </select>
+                                    <p class="text-muted"><small>Allows users to hide the announcement. If disabled, it stays visible constantly.</small></p>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label class="control-label">Banner Type / Color</label>
+                                <div>
+                                    <select class="form-control" name="pterodactyl:theme:announcement_type">
+                                        <option value="info" {{ old('pterodactyl:theme:announcement_type', config('pterodactyl.theme.announcement_type')) === 'info' ? 'selected' : '' }}>Info (Purple / Blue)</option>
+                                        <option value="warning" {{ old('pterodactyl:theme:announcement_type', config('pterodactyl.theme.announcement_type')) === 'warning' ? 'selected' : '' }}>Warning (Yellow / Orange)</option>
+                                        <option value="critical" {{ old('pterodactyl:theme:announcement_type', config('pterodactyl.theme.announcement_type')) === 'critical' ? 'selected' : '' }}>Critical (Red)</option>
+                                    </select>
+                                    <p class="text-muted"><small>The styling type and alert color theme of the banner.</small></p>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label class="control-label">Announcement Content</label>
+                                <div>
+                                    <textarea class="form-control" name="pterodactyl:theme:announcement_text" rows="3" placeholder="Enter announcement text here. HTML tags are supported.">{{ old('pterodactyl:theme:announcement_text', config('pterodactyl.theme.announcement_text')) }}</textarea>
+                                    <p class="text-muted"><small>The announcement text/HTML content to display at the top of the user dashboard.</small></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="box-footer">
                         {!! csrf_field() !!}

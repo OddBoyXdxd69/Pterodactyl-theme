@@ -32,6 +32,10 @@ class AssetComposer
                 'logo' => trim(config('pterodactyl.theme.login_logo', '')) ?: '/assets/svgs/pterodactyl.svg',
                 'footer' => config('pterodactyl.theme.login_footer') ?: '',
                 'discord_url' => trim(config('pterodactyl.theme.discord_url', '')) ?: 'https://discord.gg',
+                'announcement_enabled' => (bool) config('pterodactyl.theme.announcement_enabled', false),
+                'announcement_text' => config('pterodactyl.theme.announcement_text') ?: '',
+                'announcement_type' => config('pterodactyl.theme.announcement_type') ?: 'info',
+                'announcement_dismissible' => (bool) config('pterodactyl.theme.announcement_dismissible', true),
             ],
             'plugins' => [
                 'enabled' => (bool) config('pterodactyl.plugins.enabled', false),

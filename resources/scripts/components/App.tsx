@@ -14,6 +14,7 @@ import AuthenticatedRoute from '@/components/elements/AuthenticatedRoute';
 import { ServerContext } from '@/state/server';
 import '@/assets/tailwind.css';
 import Spinner from '@/components/elements/Spinner';
+import AnnouncementBanner from '@/components/elements/AnnouncementBanner';
 
 const DashboardRouter = lazy(() => import(/* webpackChunkName: "dashboard" */ '@/routers/DashboardRouter'));
 const ServerRouter = lazy(() => import(/* webpackChunkName: "server" */ '@/routers/ServerRouter'));
@@ -73,6 +74,7 @@ const App = () => {
                                 <Spinner.Suspense>
                                     <ServerContext.Provider>
                                         <div css={tw`md:pl-64 pt-16 min-h-screen`}>
+                                            <AnnouncementBanner />
                                             <ServerRouter />
                                         </div>
                                     </ServerContext.Provider>
@@ -81,6 +83,7 @@ const App = () => {
                             <AuthenticatedRoute path={'/'}>
                                 <Spinner.Suspense>
                                     <div css={tw`md:pl-64 pt-16 min-h-screen`}>
+                                        <AnnouncementBanner />
                                         <DashboardRouter />
                                     </div>
                                 </Spinner.Suspense>
