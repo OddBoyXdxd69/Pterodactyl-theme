@@ -13,7 +13,7 @@ Route::get('/', [Admin\BaseController::class, 'index'])->name('admin.index');
 |
 | Endpoint: /admin/api
 |
-*/
+| */
 Route::group(['prefix' => 'api'], function () {
     Route::get('/', [Admin\ApiController::class, 'index'])->name('admin.api.index');
     Route::get('/new', [Admin\ApiController::class, 'create'])->name('admin.api.new');
@@ -30,7 +30,7 @@ Route::group(['prefix' => 'api'], function () {
 |
 | Endpoint: /admin/locations
 |
-*/
+| */
 Route::group(['prefix' => 'locations'], function () {
     Route::get('/', [Admin\LocationController::class, 'index'])->name('admin.locations');
     Route::get('/view/{location:id}', [Admin\LocationController::class, 'view'])->name('admin.locations.view');
@@ -46,7 +46,7 @@ Route::group(['prefix' => 'locations'], function () {
 |
 | Endpoint: /admin/databases
 |
-*/
+| */
 Route::group(['prefix' => 'databases'], function () {
     Route::get('/', [Admin\DatabaseController::class, 'index'])->name('admin.databases');
     Route::get('/view/{host:id}', [Admin\DatabaseController::class, 'view'])->name('admin.databases.view');
@@ -63,17 +63,22 @@ Route::group(['prefix' => 'databases'], function () {
 |
 | Endpoint: /admin/settings
 |
-*/
+| */
 Route::group(['prefix' => 'settings'], function () {
     Route::get('/', [Admin\Settings\IndexController::class, 'index'])->name('admin.settings');
     Route::get('/mail', [Admin\Settings\MailController::class, 'index'])->name('admin.settings.mail');
     Route::get('/advanced', [Admin\Settings\AdvancedController::class, 'index'])->name('admin.settings.advanced');
+    Route::get('/backups', [Admin\Settings\BackupController::class, 'index'])->name('admin.settings.backups');
 
     Route::post('/mail/test', [Admin\Settings\MailController::class, 'test'])->name('admin.settings.mail.test');
+    Route::post('/backups/trigger', [Admin\Settings\BackupController::class, 'trigger'])->name('admin.settings.backups.trigger');
+    Route::post('/backups/restore', [Admin\Settings\BackupController::class, 'restore'])->name('admin.settings.backups.restore');
+    Route::delete('/backups/delete', [Admin\Settings\BackupController::class, 'destroy'])->name('admin.settings.backups.delete');
 
     Route::patch('/', [Admin\Settings\IndexController::class, 'update']);
     Route::patch('/mail', [Admin\Settings\MailController::class, 'update']);
     Route::patch('/advanced', [Admin\Settings\AdvancedController::class, 'update']);
+    Route::patch('/backups', [Admin\Settings\BackupController::class, 'update']);
 });
 
 Route::get('/theme', [Admin\Settings\ThemeController::class, 'index'])->name('admin.theme');
@@ -105,7 +110,7 @@ Route::patch('/registration', [Admin\Settings\RegistrationConfigController::clas
 |
 | Endpoint: /admin/users
 |
-*/
+| */
 Route::group(['prefix' => 'users'], function () {
     Route::get('/', [Admin\UserController::class, 'index'])->name('admin.users');
     Route::get('/accounts.json', [Admin\UserController::class, 'json'])->name('admin.users.json');
@@ -125,7 +130,7 @@ Route::group(['prefix' => 'users'], function () {
 |
 | Endpoint: /admin/servers
 |
-*/
+| */
 Route::group(['prefix' => 'servers'], function () {
     Route::get('/', [Admin\Servers\ServerController::class, 'index'])->name('admin.servers');
     Route::get('/new', [Admin\Servers\CreateServerController::class, 'index'])->name('admin.servers.new');
@@ -168,7 +173,7 @@ Route::group(['prefix' => 'servers'], function () {
 |
 | Endpoint: /admin/nodes
 |
-*/
+| */
 Route::group(['prefix' => 'nodes'], function () {
     Route::get('/', [Admin\Nodes\NodeController::class, 'index'])->name('admin.nodes');
     Route::get('/new', [Admin\NodesController::class, 'create'])->name('admin.nodes.new');
@@ -199,7 +204,7 @@ Route::group(['prefix' => 'nodes'], function () {
 |
 | Endpoint: /admin/mounts
 |
-*/
+| */
 Route::group(['prefix' => 'mounts'], function () {
     Route::get('/', [Admin\MountController::class, 'index'])->name('admin.mounts');
     Route::get('/view/{mount:id}', [Admin\MountController::class, 'view'])->name('admin.mounts.view');
@@ -221,7 +226,7 @@ Route::group(['prefix' => 'mounts'], function () {
 |
 | Endpoint: /admin/nests
 |
-*/
+| */
 Route::group(['prefix' => 'nests'], function () {
     Route::get('/', [Admin\Nests\NestController::class, 'index'])->name('admin.nests');
     Route::get('/new', [Admin\Nests\NestController::class, 'create'])->name('admin.nests.new');

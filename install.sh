@@ -95,6 +95,13 @@ files=(
   "resources/scripts/routers/AuthenticationRouter.tsx"
   "app/Http/Controllers/Admin/Settings/RegistrationConfigController.php"
   "resources/views/admin/settings/registration.blade.php"
+  "app/Http/Controllers/Admin/Settings/BackupController.php"
+  "app/Http/Controllers/Api/Remote/Backups/BackupQueueController.php"
+  "app/Services/Backups/UniversalBackupService.php"
+  "database/migrations/2026_06_04_130000_create_universal_backups_table.php"
+  "routes/api-remote.php"
+  "resources/views/admin/settings/backups.blade.php"
+  "public/node_backup_agent.sh"
 )
 
 # 2. Download and replace files

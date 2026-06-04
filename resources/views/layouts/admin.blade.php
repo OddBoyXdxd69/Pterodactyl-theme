@@ -121,6 +121,11 @@
                                 <i class="fa fa-wrench"></i> <span>Tickets Config</span>
                             </a>
                         </li>
+                        <li class="{{ Route::currentRouteName() !== 'admin.settings.backups' ?: 'active' }}">
+                            <a href="{{ route('admin.settings.backups') }}">
+                                <i class="fa fa-cloud-upload"></i> <span>Universal Backups</span>
+                            </a>
+                        </li>
                         <li class="header">MANAGEMENT</li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">

@@ -55,6 +55,13 @@ class SettingsServiceProvider extends ServiceProvider
         'pterodactyl:discord:enabled',
         'pterodactyl:discord:client_id',
         'pterodactyl:discord:client_secret',
+        'pterodactyl:backups:enabled',
+        'pterodactyl:backups:gdrive_auth_method',
+        'pterodactyl:backups:gdrive_client_id',
+        'pterodactyl:backups:gdrive_client_secret',
+        'pterodactyl:backups:gdrive_refresh_token',
+        'pterodactyl:backups:gdrive_service_account',
+        'pterodactyl:backups:gdrive_folder_id',
     ];
 
     /**

@@ -21,6 +21,13 @@ A professional, modern, and responsive left-sidebar theme layout for Pterodactyl
 3. **Branding Configurations**:
    - Configure branding elements (Logo, Favicon, Accent Colors, Discord link, Support link) from the Admin panel settings.
 
+4. **Universal Cloud Backups & Disaster Recovery**:
+   - Back up the entire panel MySQL database structure and user credentials directly to Google Drive.
+   - Back up entire Nodes (all servers hosted on a node) or individual servers to Google Drive with automated queueing.
+   - High performance zero-disk-waste streaming: Server folders are zipped and streamed directly to Google Drive via Rclone (`rclone rcat`) on-the-fly, preventing local storage exhaustion.
+   - Dual authentication options: Supports Google Drive OAuth2 credentials and Google Cloud Service Account JSON keys.
+   - Automated disaster recovery: Restores database/users structure first, then downloads and extracts server folders back to the target node VPS.
+
 ---
 
 ## Installation
@@ -42,17 +49,38 @@ sudo ./install.sh
 
 ## Admin Configuration
 
+### Subdomains System
 To configure the allowed domains and Cloudflare credentials for client subdomains:
 
 1. Access your Pterodactyl **Admin Panel**.
-2. Navigate to **Management** -> **Subdomains Config** (in the sidebar).
-3. Update the following fields:
-   * **Subdomains Status**: Toggle to Enable/Disable.
-   * **Allowed Root Domains**: List the domains available for clients (comma or newline-separated, e.g. `mc-join.me, play-game.gg`).
-   * **Cloudflare Email**: Your Cloudflare account email address.
-   * **Cloudflare API Key**: Your Cloudflare Global API Key or Zone Edit Token.
-   * **Cloudflare Zone ID**: The target Zone ID associated with your domains.
-4. Click **Save Settings**.
+2. Navigate to **Settings** -> **Subdomains Config** or **General** -> **Subdomains**.
+3. Update the fields and click **Save Settings**.
+
+### Universal Cloud Backups Setup
+1. Access your Pterodactyl **Admin Panel**.
+2. Navigate to **Settings** -> **Universal Backups**.
+3. Configure your Google Drive Credentials:
+   * Select your **Authentication Method** (OAuth2 Client or Service Account JSON).
+   * Enter your Google Drive **Target Folder ID**.
+   * Fill in the corresponding OAuth2 client fields or paste the JSON key content.
+4. Click **Save Configurations**.
+5. Set up the Node Backup Agent on your Node VPS(s) (see below).
+
+---
+
+## Node Backup Agent Setup
+
+On each of your Node (Wings) VPS servers, configure the backup agent to run on a regular cron job to process backup and restore tasks:
+
+1. Download and install the agent script on the Node VPS:
+   ```bash
+   curl -sSL -o /usr/local/bin/node_backup_agent.sh https://<your-panel-domain>/node_backup_agent.sh
+   chmod +x /usr/local/bin/node_backup_agent.sh
+   ```
+2. Create a cron job to run the agent every minute by running `crontab -e` and adding:
+   ```cron
+   * * * * * /usr/local/bin/node_backup_agent.sh >/dev/null 2>&1
+   ```
 
 ---
 
