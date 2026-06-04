@@ -226,6 +226,9 @@
             <div class="box box-default">
                 <div class="box-header with-border">
                     <h3 class="box-title"><i class="fa fa-history"></i> Google Drive Cloud Backup History</h3>
+                    <div class="box-tools">
+                        <a href="{{ route('admin.settings.backups') }}" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i> Refresh Backups</a>
+                    </div>
                 </div>
                 <div class="box-body table-responsive no-padding">
                     <table class="table table-hover">
