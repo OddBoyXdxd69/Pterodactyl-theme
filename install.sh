@@ -32,6 +32,12 @@ if grep -q "APP_ENVIRONMENT_ONLY=true" "$PANEL_DIR/.env"; then
   sed -i 's/APP_ENVIRONMENT_ONLY=true/APP_ENVIRONMENT_ONLY=false/g' "$PANEL_DIR/.env"
 fi
 
+# Ensure RECAPTCHA_ENABLED is set to false if not already defined to prevent lockout on fresh installs
+if ! grep -q "RECAPTCHA_ENABLED" "$PANEL_DIR/.env"; then
+  echo "[*] Disabling reCAPTCHA in .env by default to prevent login lockouts..."
+  echo -e "\nRECAPTCHA_ENABLED=false" >> "$PANEL_DIR/.env"
+fi
+
 # List of files to download from your repo
 files=(
   "app/Http/Controllers/Admin/Settings/ThemeController.php"
