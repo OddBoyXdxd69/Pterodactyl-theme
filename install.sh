@@ -120,9 +120,12 @@ files=(
 )
 
 # 2. Download and replace files
-echo "[*] Downloading and placing theme files..."
+total_files=${#files[@]}
+echo "[*] Downloading and placing $total_files theme files..."
+count=0
 for file in "${files[@]}"; do
-  echo "  -> Downloading: $file"
+  count=$((count + 1))
+  echo "  [$count/$total_files] Downloading: $file"
   mkdir -p "$(dirname "$PANEL_DIR/$file")"
   curl -s -L "$BASE_URL/$file" -o "$PANEL_DIR/$file"
 done
