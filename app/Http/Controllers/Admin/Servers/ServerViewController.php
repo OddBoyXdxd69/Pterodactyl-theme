@@ -144,7 +144,8 @@ class ServerViewController extends Controller
         foreach ($nodeData as &$node) {
             if ($node['id'] === $server->node_id) {
                 // Merge and ensure unique by allocation ID
-                $merged = array_merge($node['allocations'], $serverAllocations);
+                $nodeAllocs = is_object($node['allocations']) ? $node['allocations']->toArray() : $node['allocations'];
+                $merged = array_merge($nodeAllocs, $serverAllocations);
                 // Unique by 'id'
                 $unique = [];
                 foreach ($merged as $alloc) {
