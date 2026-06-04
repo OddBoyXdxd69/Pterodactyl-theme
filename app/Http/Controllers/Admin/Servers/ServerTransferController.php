@@ -1,0 +1,180 @@
+<?php
+
+namespace Pterodactyl\Http\Controllers\Admin\Servers;
+
+use Carbon\CarbonImmutable;
+use Illuminate\Http\Request;
+use Pterodactyl\Enum\JwtScope;
+use Pterodactyl\Models\Server;
+use Illuminate\Http\RedirectResponse;
+use Prologue\Alerts\AlertsMessageBag;
+use Pterodactyl\Models\ServerTransfer;
+use Illuminate\Database\ConnectionInterface;
+use Pterodactyl\Http\Controllers\Controller;
+use Pterodactyl\Services\Nodes\NodeJWTService;
+use Pterodactyl\Repositories\Eloquent\NodeRepository;
+use Pterodactyl\Repositories\Wings\DaemonTransferRepository;
+use Pterodactyl\Repositories\Wings\DaemonServerRepository;
+use Pterodactyl\Contracts\Repository\AllocationRepositoryInterface;
+
+class ServerTransferController extends Controller
+{
+    /**
+     * ServerTransferController constructor.
+     */
+    public function __construct(
+        private AlertsMessageBag $alert,
+        private AllocationRepositoryInterface $allocationRepository,
+        private ConnectionInterface $connection,
+        private DaemonTransferRepository $daemonTransferRepository,
+        private NodeJWTService $nodeJWTService,
+        private NodeRepository $nodeRepository,
+        private DaemonServerRepository $daemonServerRepository,
+    ) {
+    }
+
+    /**
+     * Starts a transfer of a server to a new node.
+     *
+     * @throws \Throwable
+     */
+    public function transfer(Request $request, Server $server): RedirectResponse
+    {
+        $validatedData = $request->validate([
+            'node_id' => 'required|exists:nodes,id',
+            'allocation_id' => 'required|bail|unique:servers,allocation_id,' . $server->id . '|exists:allocations,id',
+            'allocation_additional' => 'nullable',
+        ]);
+
+        $node_id = intval($validatedData['node_id']);
+        $allocation_id = intval($validatedData['allocation_id']);
+        $additional_allocations = array_map('intval', $validatedData['allocation_additional'] ?? []);
+
+        // If transferring/re-allocating on the same node, perform reallocation directly
+        if ($node_id === $server->node_id) {
+            $server->validateTransferState();
+
+            $targetAllocationIds = array_merge([$allocation_id], $additional_allocations);
+
+            // Double check that all target allocations belong to this node
+            $validAllocationCount = \Pterodactyl\Models\Allocation::query()
+                ->where('node_id', $server->node_id)
+                ->whereIn('id', $targetAllocationIds)
+                ->count();
+
+            if ($validAllocationCount !== count(array_unique($targetAllocationIds))) {
+                $this->alert->danger('One or more of the selected allocations do not belong to this node.')->flash();
+                return redirect()->route('admin.servers.view.manage', $server->id);
+            }
+
+            // Check that none of the chosen allocations are assigned to other servers
+            $conflictCount = \Pterodactyl\Models\Allocation::query()
+                ->where('node_id', $server->node_id)
+                ->whereIn('id', $targetAllocationIds)
+                ->whereNotNull('server_id')
+                ->where('server_id', '!=', $server->id)
+                ->count();
+
+            if ($conflictCount > 0) {
+                $this->alert->danger('One or more of the selected allocations are already assigned to another server.')->flash();
+                return redirect()->route('admin.servers.view.manage', $server->id);
+            }
+
+            // Perform the reallocation inside a transaction
+            $this->connection->transaction(function () use ($server, $allocation_id, $targetAllocationIds) {
+                // Free old allocations
+                \Pterodactyl\Models\Allocation::query()->where('server_id', $server->id)->update(['server_id' => null]);
+
+                // Assign new allocations to the server
+                \Pterodactyl\Models\Allocation::query()
+                    ->where('node_id', $server->node_id)
+                    ->whereIn('id', $targetAllocationIds)
+                    ->update(['server_id' => $server->id]);
+
+                // Set server's default allocation
+                $server->allocation_id = $allocation_id;
+                $server->save();
+            });
+
+            // Trigger Wings rebuild / sync
+            try {
+                $this->daemonServerRepository->setServer($server)->sync();
+            } catch (\Throwable $exception) {
+                \Log::warning($exception, ['server_id' => $server->id]);
+                $this->alert->warning('Server allocations reallocated in the database, but failed to sync new port configurations to Wings. Please check daemon logs.')->flash();
+                return redirect()->route('admin.servers.view.manage', $server->id);
+            }
+
+            $this->alert->success('Server allocations reallocated successfully on the same node.')->flash();
+            return redirect()->route('admin.servers.view.manage', $server->id);
+        }
+
+        // Check if the node is viable for the transfer.
+        $node = $this->nodeRepository->getNodeWithResourceUsage($node_id);
+        if (!$node->isViable($server->memory, $server->disk)) {
+            $this->alert->danger(trans('admin/server.alerts.transfer_not_viable'))->flash();
+
+            return redirect()->route('admin.servers.view.manage', $server->id);
+        }
+
+        $server->validateTransferState();
+
+        $this->connection->transaction(function () use ($server, $node_id, $allocation_id, $additional_allocations) {
+            // Create a new ServerTransfer entry.
+            $transfer = new ServerTransfer();
+
+            $transfer->server_id = $server->id;
+            $transfer->old_node = $server->node_id;
+            $transfer->new_node = $node_id;
+            $transfer->old_allocation = $server->allocation_id;
+            $transfer->new_allocation = $allocation_id;
+            $transfer->old_additional_allocations = $server->allocations->where('id', '!=', $server->allocation_id)->pluck('id')->values()->toArray();
+            $transfer->new_additional_allocations = $additional_allocations;
+
+            $transfer->save();
+
+            // Add the allocations to the server, so they cannot be automatically assigned while the transfer is in progress.
+            $this->assignAllocationsToServer($server, $node_id, $allocation_id, $additional_allocations);
+
+            // Generate a token for the destination node that the source node can use to authenticate with.
+            $token = $this->nodeJWTService
+                ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
+                ->setSubject($server->uuid)
+                ->setScopes(JwtScope::ServerTransfer)
+                ->handle($transfer->newNode, $server->uuid);
+
+            // Notify the source node of the pending outgoing transfer.
+            $this->daemonTransferRepository->setServer($server)->notify($transfer->newNode, $token);
+
+            return $transfer;
+        });
+
+        $this->alert->success(trans('admin/server.alerts.transfer_started'))->flash();
+
+        return redirect()->route('admin.servers.view.manage', $server->id);
+    }
+
+    /**
+     * Assigns the specified allocations to the specified server.
+     */
+    private function assignAllocationsToServer(Server $server, int $node_id, int $allocation_id, array $additional_allocations)
+    {
+        $allocations = $additional_allocations;
+        $allocations[] = $allocation_id;
+
+        $unassigned = $this->allocationRepository->getUnassignedAllocationIds($node_id);
+
+        $updateIds = [];
+        foreach ($allocations as $allocation) {
+            if (!in_array($allocation, $unassigned)) {
+                continue;
+            }
+
+            $updateIds[] = $allocation;
+        }
+
+        if (!empty($updateIds)) {
+            $this->allocationRepository->updateWhereIn('id', $updateIds, ['server_id' => $server->id]);
+        }
+    }
+}

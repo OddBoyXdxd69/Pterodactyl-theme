@@ -106,6 +106,9 @@ files=(
   "app/Jobs/UploadBackupToGDriveJob.php"
   "app/Console/Kernel.php"
   "app/Console/Commands/Maintenance/UniversalBackupCommand.php"
+  "app/Http/Controllers/Admin/Servers/ServerViewController.php"
+  "app/Http/Controllers/Admin/Servers/ServerTransferController.php"
+  "resources/views/admin/servers/view/manage.blade.php"
 )
 
 # 2. Download and replace files
