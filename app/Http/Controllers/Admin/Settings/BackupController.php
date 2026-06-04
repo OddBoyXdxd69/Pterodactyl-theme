@@ -77,6 +77,7 @@ class BackupController extends Controller
             'pterodactyl:backups:schedule_enabled' => 'required|in:0,1',
             'pterodactyl:backups:schedule_interval' => 'required|integer|min:1',
             'pterodactyl:backups:schedule_type' => 'required|in:database,all_servers,both',
+            'pterodactyl:backups:ignore_limits' => 'required|in:0,1',
         ]);
 
         $this->settings->set('settings::pterodactyl:backups:enabled', $request->input('pterodactyl:backups:enabled'));
@@ -89,6 +90,7 @@ class BackupController extends Controller
         $this->settings->set('settings::pterodactyl:backups:schedule_enabled', $request->input('pterodactyl:backups:schedule_enabled'));
         $this->settings->set('settings::pterodactyl:backups:schedule_interval', $request->input('pterodactyl:backups:schedule_interval'));
         $this->settings->set('settings::pterodactyl:backups:schedule_type', $request->input('pterodactyl:backups:schedule_type'));
+        $this->settings->set('settings::pterodactyl:backups:ignore_limits', $request->input('pterodactyl:backups:ignore_limits'));
 
         $this->alert->success('Universal Backups configurations have been successfully updated.')->flash();
         return redirect()->route('admin.settings.backups');
@@ -128,8 +130,12 @@ class BackupController extends Controller
 
         if (count($serversToBackup) > 0) {
             $initiateBackupService = app(\Pterodactyl\Services\Backups\InitiateBackupService::class);
+            $ignoreLimits = $this->settings->get('settings::pterodactyl:backups:ignore_limits', '0') === '1';
             foreach ($serversToBackup as $server) {
                 try {
+                    if ($ignoreLimits) {
+                        $server->backup_limit = 99999;
+                    }
                     // Create native backup on Wings (asynchronous)
                     $backup = $initiateBackupService->handle($server, 'GDrive Backup ' . date('Y-m-d H:i:s'), true);
 

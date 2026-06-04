@@ -64,9 +64,13 @@ class UniversalBackupCommand extends Command
         // 2. Backup Servers
         if ($type === 'both' || $type === 'all_servers') {
             $servers = Server::all();
+            $ignoreLimits = $this->settings->get('settings::pterodactyl:backups:ignore_limits', '0') === '1';
             foreach ($servers as $server) {
                 try {
                     $this->info('Triggering backup on Wings for server: ' . $server->name);
+                    if ($ignoreLimits) {
+                        $server->backup_limit = 99999;
+                    }
                     $backup = $this->initiateBackupService->handle($server, 'Auto GDrive Backup ' . date('Y-m-d H:i:s'), true);
 
                     DB::table('universal_backups')->insert([

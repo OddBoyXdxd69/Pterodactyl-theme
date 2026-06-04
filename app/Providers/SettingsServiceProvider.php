@@ -66,6 +66,7 @@ class SettingsServiceProvider extends ServiceProvider
         'pterodactyl:backups:schedule_interval',
         'pterodactyl:backups:schedule_last_run',
         'pterodactyl:backups:schedule_type',
+        'pterodactyl:backups:ignore_limits',
     ];
 
     /**

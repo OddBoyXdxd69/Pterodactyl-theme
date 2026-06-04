@@ -125,6 +125,18 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="form-group col-xs-12">
+                                <label class="control-label">Ignore Server Backup Limits</label>
+                                <div>
+                                    <select class="form-control" name="pterodactyl:backups:ignore_limits">
+                                        <option value="1" @if(config('pterodactyl.backups.ignore_limits') == '1') selected @endif>Yes, Ignore Limits (Allows backing up servers even if backup limit is 0 or reached)</option>
+                                        <option value="0" @if(config('pterodactyl.backups.ignore_limits') != '1') selected @endif>No, Respect Limits</option>
+                                    </select>
+                                    <p class="text-muted small">If enabled, universal backups will temporarily bypass standard server backup limit checks in memory.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="box-footer">
                         <button type="submit" class="btn btn-primary pull-right">Save Configurations</button>
